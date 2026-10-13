@@ -1,0 +1,10 @@
+# codex challenge — range 555d6ff848adb3ac84c0126fa864875373417fdc..a73c52ac3023eac9585d2b7e1a3d4a8f1545c8af — checkout /var/folders/l7/91m9cppx1gs8v15q9hshwb780000gn/T//codex-challenge/7db2f124cc2d/review-a73c52ac-51769 — model gpt-6.1-sol/medium — exit 0 — 226s
+viz.js:125 — A validator-approved stage ID `constructor`, `toString`, or `__proto__` collides with inherited object properties; deriving its “no metric” candidate throws and aborts rendering.
+tools/check.py:317 — Non-list `nodes` and `edges` silently become empty collections during validation; `nodes:null, edges:null, scenarios:[]` passes, then crashes the renderer’s `.forEach()` calls.
+tools/check.py:324 — A node with `id:[]` records a type error, then raises an uncaught `TypeError` during dictionary lookup, aborting validation before accumulated findings are printed.
+tools/check.py:178 — Citation containment checks lexical paths without resolving symlinks; a citation through a symlink inside an allowed root reads and validates files outside those roots.
+tools/check.py:179 — A citation such as `~nonexistent_user/file` passes the prefix check but triggers an uncaught absolute/relative `commonpath()` error, aborting validation.
+tools/check.py:630 — `shoot --out frame.png` calls `makedirs('')` and raises `FileNotFoundError` before launching Chrome.
+tools/check.py:639 — Interrupting screenshot capture bypasses process termination and reaping; Chrome and its child processes remain running while their temporary profile is deleted.
+tools/check.py:654 — Screenshot success checks only file existence; Chrome exiting unsuccessfully after creating an empty or truncated PNG still produces “wrote” and exit status 0.
+tools/check.py:662 — URL values and the repository path are unescaped; IDs containing `&`, `+`, or `#` select the wrong card/scenario, and a checkout path containing `#` prevents the page from loading.

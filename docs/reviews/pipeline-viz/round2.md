@@ -1,0 +1,7 @@
+# codex challenge — range 555d6ff848adb3ac84c0126fa864875373417fdc..8ebcbdbd4e1c1096d3cfbdbaa4bc8842e68646d6 — checkout /Users/turbokach/Dev/pipeline-viz — model gpt-6.1-sol/medium — exit 0 — 234s
+viz.js:346 — Enable metrics, switch to routing, then disable metrics: artifact labels were measured while hidden and never refitted, so “→ codex model + effort” overflows its node.
+tools/check.py:481 — Scenario validation ignores arrival times: setting feature scenario a’s second step to t=0 passes validation although SIZE CALL departs before REQUEST arrives.
+viz.js:423 — Two simultaneous steps on the same edge place their packet labels identically, making artifacts unreadable; lint misses this because it never compares packet labels against each other.
+viz.js:513 — `shoot --scenario nonexistent` silently captures scenario 0 and exits successfully, producing evidence for a scenario the caller never requested.
+viz.js:467 — `shoot --card nonexistent` silently captures an unselected card panel and exits successfully, allowing a typo to pass screenshot verification.
+tools/check.py:193 — Citation confinement checks lexical paths without resolving symlinks; a symlink inside an allowed root can validate outside content or point to a FIFO that blocks validation indefinitely.

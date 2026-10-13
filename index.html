@@ -1,0 +1,105 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>pipeline-viz</title>
+<style>
+:root{--bg:#070b08;--green:#3dff8f;--dim:#1f3a2a;--cyan:#56d8ff;--amber:#ffb340;--violet:#d58cff;--red:#ff5470;--txt:#b8f5cf}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:12px/1.45 "SF Mono",Menlo,monospace}
+.wrap{max-width:1640px;margin:0 auto;padding:10px 18px}
+h1{font-size:14px;color:var(--green);margin:0 0 4px;font-weight:600;letter-spacing:.06em}
+h1 small{color:#4f8a66;font-weight:400;font-size:11px;letter-spacing:0;margin-left:12px}
+button.tab{font:inherit;color:#7fbf98;background:transparent;border:1px solid var(--dim);padding:1px 8px;margin-right:6px;cursor:pointer}
+button.tab.on{color:var(--bg);background:var(--green);border-color:var(--green)}
+button.tab.missing{color:#3a5a48;border-style:dashed;cursor:default}
+#unplaced{color:var(--amber);min-height:0}
+#scen{color:#4f8a66;margin:4px 0}
+.legend span{margin-right:16px}
+#msg{border:1px dashed var(--dim);padding:60px;text-align:center;color:#4f8a66;font-size:14px}
+#stage{overflow-x:auto}
+svg{width:100%;height:auto;display:block}
+.lane rect{fill:#0a110c;stroke:var(--dim);stroke-dasharray:2 4}
+.lane text{fill:#4f8a66;font-size:12px;letter-spacing:.14em}
+.lane text.m{fill:#33634a;font-size:10px;letter-spacing:.04em}
+.wire{fill:none;stroke-width:1.6;opacity:.32;stroke-dasharray:2 6;animation:march 2.4s linear infinite}
+.wire.kind-alt{stroke-dasharray:9 5}
+.wire.live{opacity:1;stroke-dasharray:5 4;animation-duration:.5s;filter:url(#glow)}
+@keyframes march{to{stroke-dashoffset:-16}}
+.wl,.pk text{paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round}
+.wl{font-size:10px;opacity:.85}
+.bound rect{fill:#150a0d;stroke:var(--red);stroke-width:1}
+.bound.none rect{stroke:var(--amber);stroke-dasharray:3 2}
+.bound text{fill:var(--red);font-size:9.5px}
+.bound.none text{fill:var(--amber)}
+.node{cursor:pointer}
+.node rect,.node polygon{fill:#08110b;stroke:#2c6b47;stroke-width:1.2}
+.node .t{fill:var(--green);font-weight:700;font-size:11.5px}
+.node .s{fill:#7fbf98;font-size:10px}
+.node .a{fill:#c99a4a;font-size:10px}
+.node .mt{display:none;fill:#7fd6ff;font-size:10px}
+.node .mt.un{fill:#a05060}
+.node .tag{fill:var(--amber);font-size:9px;letter-spacing:.1em}
+.node .wt{display:none;fill:var(--amber);font-size:10px}
+.k-sub rect{stroke:#2a5f73}.k-sub .t{fill:var(--cyan)}
+.k-human rect{stroke:#8a6420}.k-human .t{fill:var(--amber)}
+.k-codex rect{stroke:#6a3a80}.k-codex .t{fill:var(--violet)}
+.k-input rect{stroke:#3a7a55;stroke-dasharray:3 3}
+.k-output rect{stroke:var(--green);stroke-width:2}
+.k-decision polygon{stroke:#3a8a5f}
+.node.hot rect,.node.hot polygon{stroke:#eafff2;stroke-width:2;filter:url(#glow)}
+.node.sel rect,.node.sel polygon{stroke:#fff;stroke-width:2.2;stroke-dasharray:6 3}
+.node.wait.sel rect{stroke-dasharray:none}
+.node.wait rect{stroke:var(--amber);stroke-width:2.2;animation:pulse .6s steps(1) infinite}
+.node.wait .wt{display:block}
+@keyframes pulse{50%{stroke-opacity:.15}}
+.gb{display:none}
+.gb.ex circle{fill:#3a0d16;stroke:var(--red);stroke-width:2}
+.gb.ex text{fill:#ff8095;font-size:10px;font-weight:700}
+.gb.cd circle{fill:none;stroke:#8a6b30;stroke-width:1;stroke-dasharray:2 2;opacity:.8}
+.gb.cd text{fill:#9a7b3a;font-size:8.5px;font-weight:400}
+.ov-gaps .gb.ex,.ov-candidates .gb.cd{display:block}
+.ov-metrics .node .a{display:none}
+.ov-metrics .node .mt{display:block}
+.node.wait .a,.node.wait .mt{display:none}   /* the waiting line takes the produces/metric line's place; after the overlay rules on purpose */
+.pk circle{filter:url(#glow)}
+.pk text{font-size:10px;font-weight:600}
+.bottom{display:grid;grid-template-columns:1fr 1.25fr;gap:12px;margin-top:8px}
+.panel{border:1px solid var(--dim);background:#050805;padding:8px 12px;height:320px;overflow:auto}
+.panel h2{margin:0 0 4px;font-size:11px;color:#4f8a66;letter-spacing:.14em;font-weight:400}
+#lines div{white-space:pre}
+#lines .gate{color:var(--amber)}#lines .sep{color:#2f6a48}
+.cur{display:inline-block;width:7px;height:13px;background:var(--green);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#card b{color:var(--green);font-weight:600;display:block;margin-bottom:2px}
+#card .row{display:flex;gap:8px}
+#card .k{color:#4f8a66;flex:0 0 100px;white-space:pre}
+#card .v{flex:1;word-break:break-word}
+#card .src .v{color:#5f8f75;font-size:10.5px;word-break:break-all}
+#card .gate .v{color:var(--amber)}
+#card .gap .v{color:var(--red)}
+#card .cand .v{color:var(--amber);font-style:italic}
+/* frozen frames (?t=): every CSS animation off, a waiting human stop at full stroke */
+body.frozen *{animation:none!important;transition:none!important}
+/* frozen frames show the whole card and the whole canvas: no scrolling panel, no width cap */
+body.frozen .wrap{max-width:none}
+body.frozen .panel{height:auto;min-height:320px;overflow:visible}
+</style></head>
+<body><div class="wrap">
+<h1>pipeline-viz <small id="doctrine"></small> <small id="totals"></small></h1>
+<div id="tabs"></div>
+<div id="unplaced"></div>
+<div id="scen"></div>
+<div class="legend"><span style="color:var(--green)">── flow</span><span style="color:#56d8ff">── to subagent</span><span style="color:var(--violet)">── to codex</span><span style="color:var(--amber)">── to human stop</span><span style="color:var(--red)">── back edge (↺ bound)</span><span style="color:#4f8a66">┄ alt dashed · click a node for its card</span></div>
+<div id="msg" hidden></div>
+<div id="stage"><svg id="svg" viewBox="0 0 1000 500"></svg></div>
+<div class="bottom">
+  <div class="panel"><h2>LOG</h2><div id="lines"></div><div>&gt; <span class="cur"></span></div></div>
+  <div class="panel" id="card"></div>
+</div>
+</div>
+<!-- one classic script tag per view; a missing file is just a failed load (404), the tab shows "not built yet" -->
+<script src="spec/feature.js"></script>
+<script src="spec/recovery.js"></script>
+<script src="spec/oneshot.js"></script>
+<script src="spec/fanout.js"></script>
+<script src="spec/routing.js"></script>
+<script src="spec/meta.js"></script>
+<script src="viz.js"></script>
+</body></html>
