@@ -60,6 +60,12 @@ python3 tools/check.py shoot --all      # every built view x {plain, gaps, candi
 python3 tools/check.py lint             # exit 0 only with zero overlaps, no clipped card, subtitles >= 9 px
 ```
 
+```
+python3 -B tools/repoint.py             # re-point stale citations in spec/*.js
+```
+
+`tools/repoint.py` re-points every stale citation whose quote occurs exactly once in the cited file (it rewrites only `line`) and lists the rest as `UNRESOLVED`, for a hand content fix. Run it on specs whose only errors are stale ones, then `check.py validate`. Every spec write goes through its `load_spec` / `save_spec`: `load_spec` aborts unless the file round-trips byte-identical (wrapper, indent and escape mode kept), so a write changes only what the caller changed. Run python with `-B`: `repoint.py` imports `check`, so without it an untracked `tools/__pycache__/` appears.
+
 Errors read `file -> view -> node/edge id -> field: message`. `shoot` drives headless Chrome (temp `--user-data-dir`, fixed `--window-size`, `--virtual-time-budget`) and writes `shots/<view>-<state>.png` (gitignored). The window is as wide as the view's columns need and as tall as the page (the page reports its height in `data-doc-h`), so a frame never clips a card; `--size W,H` overrides both.
 
 `shoot` exits 0 only for a view id from the fixed table (`feature`, `recovery`, `oneshot`, `fanout`, `routing`, `meta`) whose spec is built, and only when the page rendered without error. An unknown or unbuilt `--view` exits 1 and lists the valid views; a `--t` that is not a number, an unknown `--overlay` value, a `--scenario` that is not in the view or a `--card` that is not one of its nodes exits 1 and names the param and the valid values, before Chrome starts. Before each screenshot it dumps the page DOM: `viz.js` writes `<html data-pv-view>` once the view is built and `<html data-pv-error>` for an uncaught error, a `?view=` that is unknown or not built, or (frozen mode only, i.e. with `t`) a `scenario`, `card`, `overlay` or `t` that does not resolve; the live page ignores a bad param. A page error, or a page that rendered another view, is a `FAIL` and writes no PNG; `lint` applies the same page check. `validate` reports a number outside its range (a `via` point off the grid, a scenario `t` or `d` above 60) as an error and never raises.

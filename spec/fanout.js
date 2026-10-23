@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "parallel fan-out",
  "key": "4",
  "doctrine": {
-  "kit_sha": "29fc19a",
-  "cc_validated": "2.1.294",
-  "extracted": "2026-10-12"
+  "kit_sha": "64b4512",
+  "cc_validated": "2.1.309",
+  "extracted": "2026-10-23"
  },
  "lanes": [
   {
@@ -190,6 +190,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/skills/agent-teams/SKILL.md",
         "line": 162,
         "quote": "Delegated approval"
+       }
+      ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
        }
       ]
      }
@@ -544,12 +561,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 439,
+        "line": 622,
         "quote": "named spawn {s['type']} name={s['name']}"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 435,
+        "line": 618,
         "quote": "unpinned spawn {s['type']}"
        }
       ]
@@ -1520,7 +1537,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 441,
+        "line": 624,
         "quote": "codex-challenge run in the foreground"
        },
        {

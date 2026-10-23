@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "model / effort routing",
  "key": "5",
  "doctrine": {
-  "kit_sha": "29fc19a",
-  "cc_validated": "2.1.294",
-  "extracted": "2026-10-12"
+  "kit_sha": "64b4512",
+  "cc_validated": "2.1.309",
+  "extracted": "2026-10-23"
  },
  "lanes": [
   {
@@ -99,7 +99,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 435,
+        "line": 618,
         "quote": "unpinned spawn {s['type']}"
        }
       ]
@@ -116,7 +116,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 434,
+        "line": 617,
         "quote": "pinned {s['model']} (doctrine: inherit)"
        }
       ]
@@ -138,12 +138,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 438,
+        "line": 621,
         "quote": "pinned {s['model']} (doctrine {want})"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 361,
+        "line": 528,
         "quote": "' \u2014 reason stated' if reason else ' \u2014 no reason in prompt'"
        }
       ]
@@ -264,12 +264,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 439,
+        "line": 622,
         "quote": "named spawn {s['type']} name={s['name']}"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 435,
+        "line": 618,
         "quote": "unpinned spawn {s['type']}"
        }
       ]
@@ -426,12 +426,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 438,
+        "line": 621,
         "quote": "pinned {s['model']} (doctrine {want})"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 361,
+        "line": 528,
         "quote": "' \u2014 reason stated' if reason else ' \u2014 no reason in prompt'"
        }
       ]
@@ -469,7 +469,24 @@ window.PV=window.PV||[];window.PV.push(
       ]
      }
     ],
-    "gaps": [],
+    "gaps": [
+     {
+      "text": "Report C4: four Opus fixers did branch merges and gave 'a data-loss class' as the reason, which is the executor criterion; the fixer pin needs a mechanism that survived a fix round. One ran 410 turns and 53 min before it capped. No agent owns cross-feature merges.",
+      "kind": "report",
+      "src": [
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 51,
+        "quote": "Four Opus fixers did branch merges and gave the reason \"a data-loss class\""
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 51,
+        "quote": "No agent owns cross-feature merges."
+       }
+      ]
+     }
+    ],
     "src": [
      {
       "file": "~/Dev/claude-code-setup/agents/fixer.md",
@@ -724,7 +741,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 435,
+        "line": 618,
         "quote": "unpinned spawn {s['type']}"
        }
       ]
@@ -819,7 +836,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 434,
+        "line": 617,
         "quote": "pinned {s['model']} (doctrine: inherit)"
        }
       ]

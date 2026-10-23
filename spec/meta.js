@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "meta loop",
  "key": "6",
  "doctrine": {
-  "kit_sha": "29fc19a",
-  "cc_validated": "2.1.294",
-  "extracted": "2026-10-12"
+  "kit_sha": "64b4512",
+  "cc_validated": "2.1.309",
+  "extracted": "2026-10-23"
  },
  "lanes": [
   {
@@ -628,12 +628,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/SKILL.md",
-        "line": 67,
+        "line": 97,
         "quote": "A flag is a place to look, not a verdict"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/SKILL.md",
-        "line": 75,
+        "line": 105,
         "quote": "a review escape (what codex rounds missed and why)"
        }
       ]
@@ -645,7 +645,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/SKILL.md",
-        "line": 80,
+        "line": 110,
         "quote": "measured evidence goes into a memory note so the next run has a baseline"
        }
       ]
@@ -665,7 +665,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 445,
+        "line": 629,
         "quote": "on product file inside pipeline"
        }
       ]
@@ -673,18 +673,23 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "gaps": [
      {
-      "text": "Report A1: the Bash changed-files record over-reports: it lists files other processes changed while the command ran (2.1.293) and files a git merge/switch/checkout/rebase moved. Proposal: SKILL.md names both, and analyze.py skips them.",
-      "kind": "report",
+      "text": "Tech debt (pipeline-gaps arc bundle, items 7 and 10): the analyzer's Bash-write flag still counts writes by other sessions in the same checkout (false flags), and a shell-expanded option ($(…), $VAR) passes its read-only allowlist (a real write goes unflagged).",
+      "kind": "tech-debt",
       "src": [
        {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 7,
-        "quote": "analyze-arcs: the Bash changed-files record over-reports."
+        "file": "~/Dev/claude-code-setup/docs/tech-debt.md",
+        "line": 34,
+        "quote": "Analyzer blind spots and limits"
        },
        {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 16,
-        "quote": "Neither is a master write; the flag skips both."
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 40,
+        "quote": "Writes by other sessions in the same checkout stay counted."
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 64,
+        "quote": "Analyzer: a shell-expanded option passes `cannot_write`"
        }
       ]
      },
@@ -701,6 +706,48 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/docs/todos/escape-rate-metric.md",
         "line": 5,
         "quote": "Report both numbers per arc and as a trend in the weekly report."
+       }
+      ]
+     },
+     {
+      "text": "Tech debt (pipeline-gaps arc bundle, item 5): sessions that run codex-challenge.sh without loading feature-workflow (41d1045b, fa189a8d, 20fa3ac1) are never checked for master writes, because that flag needs the skill load.",
+      "kind": "tech-debt",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/docs/tech-debt.md",
+        "line": 34,
+        "quote": "Analyzer blind spots and limits"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 34,
+        "quote": "Sessions that run `codex-challenge.sh` under a project skill without loading `feature-workflow`"
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 65,
+        "quote": "ran the pipeline with \"feature-workflow loaded: no\""
+       }
+      ]
+     },
+     {
+      "text": "Tech debt (pipeline-gaps arc bundle, item 13): about 500 nested $(…) in one command make cannot_write raise RecursionError, and no caller catches it, so one such transcript aborts the whole report; 0 of 210,376 real commands fuzzed trigger it.",
+      "kind": "tech-debt",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/docs/tech-debt.md",
+        "line": 34,
+        "quote": "Analyzer blind spots and limits"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 99,
+        "quote": "Analyzer: deeply nested `$(…)` makes `cannot_write` raise `RecursionError`"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 103,
+        "quote": "so one such transcript aborts the whole report"
        }
       ]
      }
@@ -853,6 +900,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "do not assume the waiver"
        }
       ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
+       }
+      ]
      }
     ],
     "options": [],
@@ -999,7 +1063,7 @@ window.PV=window.PV||[];window.PV.push(
      {
       "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
       "line": 22,
-      "quote": "round 2 re-challenges the resulting HEAD and its verdict is final"
+      "quote": "Loop until clean, with no round cap:"
      }
     ]
    }
@@ -1165,6 +1229,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/skills/stack-update/SKILL.md",
         "line": 123,
         "quote": "First, the master-model question — asked on every update unless the user"
+       }
+      ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
        }
       ]
      }
@@ -1397,7 +1478,7 @@ window.PV=window.PV||[];window.PV.push(
      {
       "file": "~/Dev/claude-code-setup/docs/references.md",
       "line": 6,
-      "quote": "Doctrine validated against Claude Code v2.1.294 — 2026-10-08."
+      "quote": "Doctrine validated against Claude Code v2.1.309 — 2026-10-23."
      },
      {
       "file": "~/.claude/local/cc-drift/drift.sh",
@@ -1521,12 +1602,12 @@ window.PV=window.PV||[];window.PV.push(
    "enter": "b",
    "kind": "back",
    "label": "shell P0/P1: fix",
-   "bound": "2 rounds; a read-only script: 1",
+   "bound": "no cap: owner check-in at round 5 and every fifth round after it; a read-only script: 1 round",
    "src": [
     {
      "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
      "line": 22,
-     "quote": "round 2 re-challenges the resulting HEAD and its verdict is final"
+     "quote": "When round 5 — and every fifth round after it — still has P0/P1 in the loop, ask ONE AskUserQuestion"
     },
     {
      "file": "~/.claude/projects/-Users-turbokach-Dev-claude-code-setup/memory/codex-gate-scope-doubt.md",
@@ -1849,7 +1930,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 8.8,
      "d": 0.6,
      "packet": "fix commit",
-     "log": "fix lands red-then-green -> round 2 on the new HEAD"
+     "log": "fix lands red-then-green -> re-challenge the new HEAD (round 2)"
     },
     {
      "edge": "e_scope_cdx",
@@ -1863,7 +1944,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 10.4,
      "d": 1.0,
      "packet": "clean verdict",
-     "log": "round 2: zero P0/P1; verdict shown -> push gate"
+     "log": "round 2: zero P0/P1 = clean; verdict shown -> push gate"
     },
     {
      "edge": "e_push_kitnote",

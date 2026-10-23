@@ -1,2 +1,3 @@
 shots/
 .gstack/
+__pycache__/

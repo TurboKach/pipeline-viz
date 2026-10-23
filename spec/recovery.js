@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "recovery & limits",
  "key": "2",
  "doctrine": {
-  "kit_sha": "29fc19a",
-  "cc_validated": "2.1.294",
-  "extracted": "2026-10-12"
+  "kit_sha": "64b4512",
+  "cc_validated": "2.1.309",
+  "extracted": "2026-10-23"
  },
  "lanes": [
   {
@@ -197,7 +197,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 461,
+        "line": 645,
         "quote": "subagent(s) died on an API error before doing work"
        }
       ]
@@ -212,7 +212,7 @@ window.PV=window.PV||[];window.PV.push(
      },
      {
       "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-      "line": 461,
+      "line": 645,
       "quote": "subagent(s) died on an API error before doing work"
      }
     ]
@@ -432,7 +432,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 462,
+        "line": 646,
         "quote": "flags += cap_flags(subs, r['caps'])"
        }
       ]
@@ -450,12 +450,29 @@ window.PV=window.PV||[];window.PV.push(
       ]
      }
     ],
-    "gaps": [],
+    "gaps": [
+     {
+      "text": "Report C5: when 6ea7f098's fixer hit its cap, the master ran git commit --no-verify -m \"WIP: …\" and auto mode denied it as a safety-bypass flag. The --no-verify came from the master, not the doctrine; one case.",
+      "kind": "report",
+      "src": [
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 56,
+        "quote": "The WIP commit was denied."
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 56,
+        "quote": "The `--no-verify` came from the master, not the doctrine."
+       }
+      ]
+     }
+    ],
     "src": [
      {
       "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-      "line": 281,
-      "quote": "hit its turn cap"
+      "line": 412,
+      "quote": "{s['file'][:14]} hit its turn cap{n_x(s['capped'])}"
      }
     ]
    }
@@ -1197,14 +1214,14 @@ window.PV=window.PV||[];window.PV.push(
    "kind": "input",
    "title": "CONTEXT SIZE",
    "sub": "master tokens",
-   "produces": "approx size",
+   "produces": "measured size",
    "card": {
     "actor": "harness",
     "model": "—",
     "does": "The master's own context size, posted in its cost checkpoints.",
     "inputs": [],
     "artifacts": [
-     "approx context size"
+     "measured context size"
     ],
     "gates": [],
     "options": [],
@@ -1221,7 +1238,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 196,
+        "line": 323,
         "quote": "r['peak'] = max(r['peak'], tot)"
        }
       ]
@@ -1244,7 +1261,7 @@ window.PV=window.PV||[];window.PV.push(
     "model": "opus · xhigh (settings model + modelSettings)",
     "does": "A normal arc finishes under ~400k with no compression. Crossing ~400k mid-arc is a defect signal. Near ~500k (600k absolute max) the master hands off.",
     "inputs": [
-     "approx context size"
+     "measured context size"
     ],
     "artifacts": [
      "route"
@@ -1252,7 +1269,7 @@ window.PV=window.PV||[];window.PV.push(
     "gates": [
      {
       "rule": "A normal feature arc finishes under ~400k with no compression machinery.",
-      "evidence": "the approx context size in the cost checkpoints",
+      "evidence": "the measured context size in the cost checkpoints",
       "enforced_by": "prose",
       "src": [
        {
@@ -1331,14 +1348,19 @@ window.PV=window.PV||[];window.PV.push(
       ]
      },
      {
-      "rule": "Unattended tail: a one-line cost checkpoint at every step boundary (elapsed time, approx context size).",
-      "evidence": "the checkpoint lines",
+      "rule": "Unattended tail: a one-line cost checkpoint at every step boundary (elapsed time, and the context size read from the last assistant usage in the session transcript, never estimated).",
+      "evidence": "the checkpoint lines, each with a measured context size",
       "enforced_by": "prose",
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 40,
-        "quote": "post a one-line cost checkpoint at every step boundary (elapsed time, approx context size)"
+        "quote": "post a one-line cost checkpoint at every step boundary"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 40,
+        "quote": "input + cache-read + cache-creation tokens, never estimated"
        }
       ]
      }
@@ -1358,24 +1380,7 @@ window.PV=window.PV||[];window.PV.push(
       ]
      }
     ],
-    "gaps": [
-     {
-      "text": "Report C2: cost checkpoints report a guessed context size, and two masters passed 400k with no further figure (peaks 511k, 570k). Proposal: the figure comes from the last cache_read_input_tokens in the session transcript, never an estimate.",
-      "kind": "report",
-      "src": [
-       {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 49,
-        "quote": "Cost checkpoints report a guessed context size. Proposal."
-       },
-       {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 60,
-        "quote": "the context size read from the last `cache_read_input_tokens` in this session's transcript"
-       }
-      ]
-     }
-    ],
+    "gaps": [],
     "src": []
    }
   },
@@ -1452,7 +1457,29 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "options": [],
     "metrics": [],
-    "gaps": [],
+    "gaps": [
+     {
+      "text": "Report C2 (remainder): a coordinator gave one master many tickets (41d1045b ran 7 in 11 h), which defeats 'a new arc gets a new master'; 14 masters peaked at 600k or more and 3 auto-compacted near 967k. The coordinator's design is the owner's call.",
+      "kind": "report",
+      "src": [
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 32,
+        "quote": "14 masters peaked at ≥600k; last week none did."
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 34,
+        "quote": "The coordinator gives one master many tickets"
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 33,
+        "quote": "Three masters auto-compacted at about 967k"
+       }
+      ]
+     }
+    ],
     "src": [
      {
       "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",

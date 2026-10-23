@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "feature pipeline",
  "key": "1",
  "doctrine": {
-  "kit_sha": "29fc19a",
-  "cc_validated": "2.1.294",
-  "extracted": "2026-10-12"
+  "kit_sha": "64b4512",
+  "cc_validated": "2.1.309",
+  "extracted": "2026-10-23"
  },
  "lanes": [
   {
@@ -87,7 +87,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 427,
+        "line": 610,
         "quote": "no one-shot/pipeline call line before feature-workflow loaded"
        }
       ]
@@ -107,7 +107,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 427,
+        "line": 610,
         "quote": "no one-shot/pipeline call line before feature-workflow loaded"
        }
       ]
@@ -275,7 +275,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 451,
+        "line": 635,
         "quote": "master read {n} product file(s) in plan mode"
        }
       ]
@@ -324,7 +324,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 451,
+        "line": 635,
         "quote": "master read {n} product file(s) in plan mode"
        }
       ]
@@ -486,7 +486,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 434,
+        "line": 617,
         "quote": "pinned {s['model']} (doctrine: inherit)"
        }
       ]
@@ -631,6 +631,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "every surfaced item's options include the simplest choice"
        }
       ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
+       }
+      ]
      }
     ],
     "options": [
@@ -726,7 +743,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 455,
+        "line": 639,
         "quote": "ExitPlanMode waited {w} min for approval"
        }
       ]
@@ -793,7 +810,7 @@ window.PV=window.PV||[];window.PV.push(
       ]
      },
      {
-      "rule": "The task list mirrors the plan: one task per step plus the fixed tail (codex clean, fix-or-defer, suite exits 0, handoff, no live agents).",
+      "rule": "The task list mirrors the plan: one task per step plus the fixed tail (codex loop ended, fix-or-defer, suite exits 0 (under a project's own full-suite cadence: the tests that rule requires), handoff, no live agents).",
       "evidence": "the final TaskList in the closing report",
       "enforced_by": "prose",
       "src": [
@@ -806,6 +823,16 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 21,
         "quote": "the closing report shows the final `TaskList`"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 20,
+        "quote": "codex loop ended: verdict clean, or every remaining P0/P1 taken out of the loop by the owner"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 20,
+        "quote": "under a project's own full-suite cadence: the tests that rule requires per feature"
        }
       ]
      },
@@ -901,12 +928,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 439,
+        "line": 622,
         "quote": "named spawn {s['type']} name={s['name']}"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 435,
+        "line": 618,
         "quote": "unpinned spawn {s['type']}"
        }
       ]
@@ -955,7 +982,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 469,
+        "line": 653,
         "quote": "{mins(sub['first'], sub['last'])}"
        }
       ]
@@ -1249,12 +1276,12 @@ window.PV=window.PV||[];window.PV.push(
    "col": 7,
    "kind": "stage",
    "title": "FULL SUITE",
-   "sub": "after last step",
+   "sub": "last step / cadence",
    "produces": "run counts",
    "card": {
     "actor": "master (one background Bash)",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "The final execution task: the whole test suite as one run_in_background Bash with gtimeout 3600 and timeout 7200000. Never per step.",
+    "does": "The final execution task: the whole test suite as one run_in_background Bash with gtimeout 3600 and timeout 7200000. Never per step. A project's own full-suite cadence rule replaces this run.",
     "inputs": [
      "last step landed"
     ],
@@ -1271,6 +1298,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 21,
         "quote": "the whole test suite runs once after the last step lands"
+       }
+      ]
+     },
+     {
+      "rule": "Where the project's instructions set their own full-suite cadence, that rule replaces this run: the full suite runs only when it calls for one.",
+      "evidence": "the plan schedules the full suite only where that rule calls for one",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 21,
+        "quote": "Where the project's instructions set their own full-suite cadence, that rule replaces both runs"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 17,
+        "quote": "unless the project's instructions set their own full-suite cadence"
        }
       ]
      },
@@ -1365,7 +1409,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 441,
+        "line": 624,
         "quote": "codex-challenge run in the foreground"
        },
        {
@@ -1391,7 +1435,7 @@ window.PV=window.PV||[];window.PV.push(
       ]
      },
      {
-      "name": "whole-range rounds in the free-canvas arc, before the two-round cap (findings 17/15/12/11)",
+      "name": "whole-range rounds in the free-canvas arc (findings 17/15/12/11 per round)",
       "value": "4, unconverged",
       "as_of": "2026-09-15",
       "src": [
@@ -1417,6 +1461,22 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/docs/todos/verified-head-record.md",
         "line": 8,
         "quote": "is a rule the master keeps in mind; nothing enforces it"
+       }
+      ]
+     },
+     {
+      "text": "Report C5: foreground codex is real. In 3 of 3 sampled sessions the master chained git commit && codex-challenge.sh in one foreground call (1–2 min each), though the doctrine requires a background run; 15 runs were flagged.",
+      "kind": "report",
+      "src": [
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 54,
+        "quote": "In all three samples, the master chained `git commit && codex-challenge.sh` in one foreground call"
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 80,
+        "quote": "| foreground codex | 0 real | 15 flagged; 3/3 sampled real |"
        }
       ]
      }
@@ -1602,7 +1662,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "master",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "Recomputes the counts from the finding lines. Round 1 P0/P1 go to fixers, one per finding set plus adjacent P2s. Round 2 is final: open P1 deferred, open P0 or a contract change to the owner. Same mechanism twice: a mechanism fixer.",
+    "does": "Recomputes the counts from the finding lines. Each round's P0/P1 go to fixers, one per finding set plus adjacent P2s; the next round re-challenges: no round cap. Round 5 and every fifth after it: P0/P1 still in the loop go to the owner. Same mechanism twice: a mechanism fixer.",
     "inputs": [
      "triaged verdict",
      "spec-reviewer gaps"
@@ -1655,7 +1715,29 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "options": [],
     "metrics": [],
-    "gaps": [],
+    "gaps": [
+     {
+      "text": "Tech debt (pipeline-gaps arc bundle, item 8): the round-5 check-in sentence starts about 17 KB into the ~37 KB SKILL.md, close to the 5,000-token cut that compaction keeps; a compacted master could run the loop with no instruction to ask at round 5.",
+      "kind": "tech-debt",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/docs/tech-debt.md",
+        "line": 34,
+        "quote": "stage-5 check-in vs the 5,000-token compaction cut"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 51,
+        "quote": "The stage-5 round-5 check-in is part of this item."
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 54,
+        "quote": "A compacted master that lost it would run the loop with no instruction to ask at round 5."
+       }
+      ]
+     }
+    ],
     "src": [
      {
       "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
@@ -1711,12 +1793,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 438,
+        "line": 621,
         "quote": "pinned {s['model']} (doctrine {want})"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 361,
+        "line": 528,
         "quote": "' — reason stated' if reason else ' — no reason in prompt'"
        }
       ]
@@ -1748,7 +1830,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 469,
+        "line": 653,
         "quote": "{mins(sub['first'], sub['last'])}"
        }
       ]
@@ -1781,7 +1863,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "owner",
     "model": "—",
-    "does": "Raised when the same-mechanism fix is materially larger than the plan's design contract anticipated: the owner decides the scope, not the master.",
+    "does": "Raised when the same-mechanism fix is materially larger than the plan's design contract anticipated: the owner decides the scope, not the master. Carried instances are deferred; a deferred P1 gets an index line and is named at the push gate.",
     "inputs": [
      "mechanism finding set"
     ],
@@ -1800,6 +1882,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "that is an AskUserQuestion (structural fix / patch this path and carry the rest), not a judgment call"
        }
       ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
+       }
+      ]
      }
     ],
     "options": [
@@ -1808,7 +1907,13 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "metrics": [],
     "gaps": [],
-    "src": []
+    "src": [
+     {
+      "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+      "line": 22,
+      "quote": "instances the structural-fix question carries are deferred"
+     }
+    ]
    }
   },
   {
@@ -1816,16 +1921,16 @@ window.PV=window.PV||[];window.PV.push(
    "lane": "owner",
    "col": 11,
    "kind": "human",
-   "title": "CONTRACT / P0",
-   "sub": "not in fix loop",
-   "produces": "defer or ship",
+   "title": "CONTRACT / R5",
+   "sub": "out of the fix loop",
+   "produces": "defer, ship, go on",
    "card": {
     "actor": "owner",
     "model": "—",
-    "does": "A contract the plan did not change (wire schema, API field, persisted model) never changes in the fix loop. After round 2 an open P0 also comes here: a P0 never ships.",
+    "does": "A contract the plan did not change (wire schema, API field, persisted model) never changes in the fix loop. P0/P1 still in the loop at round 5, and every fifth round after it, come here too: the owner continues the loop or takes them out of it.",
     "inputs": [
      "contract-touching finding",
-     "open P0 after round 2"
+     "P0/P1 still in the loop at round 5, 10, ..."
     ],
     "artifacts": [
      "decision"
@@ -1849,14 +1954,41 @@ window.PV=window.PV||[];window.PV.push(
       ]
      },
      {
-      "rule": "After round 2 an open P0 goes to one AskUserQuestion; a P0 never ships.",
+      "rule": "Round 5, and every fifth round after it, with P0/P1 still in the loop: ONE AskUserQuestion, continue or take them out (defer to its own arc: a P0 blocks ship until it lands; a P1 ships with its index line); no further round runs without the owner's answer.",
       "evidence": "the owner's answer",
       "enforced_by": "prose",
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 22,
-        "quote": "an open P0 goes to one AskUserQuestion (structural fix in its own arc, or defer — a P0 never ships)"
+        "quote": "When round 5 — and every fifth round after it — still has P0/P1 in the loop, ask ONE AskUserQuestion"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 22,
+        "quote": "continue the loop, or take the remaining P0/P1 out of it"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 22,
+        "quote": "and run no further round without the owner's answer"
+       }
+      ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
        }
       ]
      }
@@ -1864,8 +1996,8 @@ window.PV=window.PV||[];window.PV.push(
     "options": [
      "contract: defer to its own arc",
      "contract: ship as-is",
-     "open P0: structural fix in its own arc",
-     "open P0: defer (it never ships)"
+     "check-in: continue the loop",
+     "check-in: take P0/P1 out (own arc)"
     ],
     "metrics": [],
     "gaps": [],
@@ -1883,7 +2015,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "owner",
     "model": "—",
-    "does": "Once the verdict is clean or stopped: ONE AskUserQuestion listing the union of standalone P2, test-gap and theoretical findings across every round's verdict file.",
+    "does": "Once the loop has ended (clean, or every remaining P0/P1 taken out by the owner): ONE AskUserQuestion listing the union of standalone P2, test-gap and theoretical findings across every round's verdict file.",
     "inputs": [
      "every round's verdict file"
     ],
@@ -1900,6 +2032,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 22,
         "quote": "Standalone P2, test-gap and theoretical findings are never looped on"
+       }
+      ]
+     },
+     {
+      "rule": "When the owner's messages reach the session as <wake>/<relay> turns from a project thread, AskUserQuestion never reaches the owner: the question goes in the thread reply and the turn ends.",
+      "evidence": "the question sits in the thread reply and the turn has ended",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "When my messages reach you as `<wake>`/`<relay>` turns from a project thread"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 29,
+        "quote": "AskUserQuestion never reaches me: put the question in your thread reply and end the turn."
        }
       ]
      }
@@ -1959,14 +2108,19 @@ window.PV=window.PV||[];window.PV.push(
       ]
      },
      {
-      "rule": "After round 2 an open P1 is deferred with an index line and named at the push gate.",
+      "rule": "A P1 the owner takes out of the loop is deferred with an index line and named at the push gate; nothing goes silently to stage 6.",
       "evidence": "the P1 index line; the push-gate report names it",
       "enforced_by": "prose",
       "src": [
        {
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 22,
-        "quote": "After round 2, an open P1 is deferred with an index line (the tech-debt path below) and named at the push gate"
+        "quote": "a deferred P1 gets an index line (the tech-debt path below) and is named at the push gate"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 22,
+        "quote": "and nothing goes silently to stage 6"
        }
       ]
      }
@@ -1983,14 +2137,14 @@ window.PV=window.PV||[];window.PV.push(
    "col": 13,
    "kind": "stage",
    "title": "CLOSE-OUT",
-   "sub": "suite again",
+   "sub": "suite again / cadence",
    "produces": "tail tasks done",
    "card": {
     "actor": "master",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "The fixed tail: the whole suite again after the fix loop, handoff written, no live agents and no executor worktrees, watchdog cron deleted. The arc is complete when no task is open.",
+    "does": "The fixed tail: the whole suite again after the fix loop (a project's own full-suite cadence rule replaces it), handoff written, no live agents and no executor worktrees, watchdog cron deleted. The arc is complete when no task is open.",
     "inputs": [
-     "clean or final verdict"
+     "loop ended: clean, or P0/P1 taken out"
     ],
     "artifacts": [
      "suite counts",
@@ -2011,6 +2165,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
         "line": 20,
         "quote": "test suite exits 0 with output shown"
+       }
+      ]
+     },
+     {
+      "rule": "Where the project's instructions set their own full-suite cadence, that rule replaces the run after the fix loop; the tail needs the tests that rule requires.",
+      "evidence": "the tests that rule requires, run output shown",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 21,
+        "quote": "Where the project's instructions set their own full-suite cadence, that rule replaces both runs"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+        "line": 20,
+        "quote": "under a project's own full-suite cadence: the tests that rule requires per feature"
        }
       ]
      },
@@ -2087,6 +2258,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "If it hasn't run, say \"unreviewed, not merging\"."
        }
       ]
+     },
+     {
+      "rule": "A commit after the clean verdict that touches only docs/reviews/, docs/todos/, the TODO index or handoff docs does not reopen the codex gate; the push ask shows git diff --stat <reviewed-head>..HEAD.",
+      "evidence": "git diff --stat <reviewed-head>..HEAD, shown in the push ask",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 27,
+        "quote": "A commit after the clean verdict that touches only `docs/reviews/`, `docs/todos/`"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 27,
+        "quote": "does not reopen this gate or a one-shot's review; the push ask shows `git diff --stat <reviewed-head>..HEAD`"
+       }
+      ]
      }
     ],
     "options": [
@@ -2108,22 +2296,6 @@ window.PV=window.PV||[];window.PV.push(
         "file": "~/Dev/claude-code-setup/docs/todos/verified-head-record.md",
         "line": 12,
         "quote": "and 3 pushed past the gated head"
-       }
-      ]
-     },
-     {
-      "text": "Report C1: after the final verdict, 3 masters re-ran codex on a docs-only delta and 3 pushed past the gated head as 'docs only'. Proposal: a commit touching only docs/reviews/, docs/todos/, the index or handoff docs does not reopen the gate; the push gate shows the diff stat.",
-      "kind": "report",
-      "src": [
-       {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 37,
-        "quote": "Masters split 3–3 on docs-only commits made after the final verdict."
-       },
-       {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 45,
-        "quote": "show `git diff --stat <gated-head>..HEAD` at the push gate"
        }
       ]
      },
@@ -2519,7 +2691,7 @@ window.PV=window.PV||[];window.PV.push(
      -0.5
     ]
    ],
-   "label": "clean / round 2 final"
+   "label": "clean"
   },
   {
    "id": "e_clean_contract",
@@ -2528,7 +2700,7 @@ window.PV=window.PV||[];window.PV.push(
    "exit": "t",
    "enter": "b",
    "kind": "flow",
-   "label": "contract / open P0"
+   "label": "contract / check-in"
   },
   {
    "id": "e_clean_struct",
@@ -2545,7 +2717,7 @@ window.PV=window.PV||[];window.PV.push(
    "exit": "r",
    "enter": "l",
    "kind": "flow",
-   "label": "round 2: open P1"
+   "label": "owner-deferred P1"
   },
   {
    "id": "e_clean_fix",
@@ -2554,7 +2726,7 @@ window.PV=window.PV||[];window.PV.push(
    "exit": "r",
    "enter": "l",
    "kind": "flow",
-   "label": "round 1 P0/P1"
+   "label": "each round's P0/P1"
   },
   {
    "id": "e_struct_fix",
@@ -2578,12 +2750,12 @@ window.PV=window.PV||[];window.PV.push(
     ]
    ],
    "label": "re-challenge",
-   "bound": "2 rounds, round 2 final",
+   "bound": "owner check-in at round 5 and every fifth round after it",
    "src": [
     {
      "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
      "line": 22,
-     "quote": "round 2 re-challenges the resulting HEAD and its verdict is final"
+     "quote": "When round 5 — and every fifth round after it — still has P0/P1 in the loop, ask ONE AskUserQuestion"
     }
    ]
   },
@@ -2596,13 +2768,44 @@ window.PV=window.PV||[];window.PV.push(
    "kind": "flow"
   },
   {
+   "id": "e_contract_fix",
+   "from": "contract",
+   "to": "fix",
+   "exit": "b",
+   "enter": "r",
+   "kind": "back",
+   "via": [
+    [
+     11,
+     2
+    ]
+   ],
+   "label": "continue",
+   "bound": "owner check-in at round 5 and every fifth round after it",
+   "src": [
+    {
+     "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+     "line": 22,
+     "quote": "continue the loop, or take the remaining P0/P1 out of it"
+    }
+   ]
+  },
+  {
    "id": "e_contract_index",
    "from": "contract",
    "to": "index",
    "exit": "b",
    "enter": "t",
    "kind": "flow",
-   "label": "defer to own arc"
+   "label": "defer to own arc",
+   "guard": "P0 blocks ship",
+   "src": [
+    {
+     "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
+     "line": 22,
+     "quote": "a P0 blocks ship until that arc lands; a P1 ships with its index line"
+    }
+   ]
   },
   {
    "id": "e_fod_index",
@@ -2619,11 +2822,30 @@ window.PV=window.PV||[];window.PV.push(
    "exit": "r",
    "enter": "t",
    "kind": "flow",
-   "label": "fix now / none",
+   "label": "none / fixed",
    "via": [
     [
      13,
      0.5
+    ]
+   ]
+  },
+  {
+   "id": "e_fod_fix",
+   "from": "fod",
+   "to": "fix",
+   "exit": "r",
+   "enter": "r",
+   "kind": "flow",
+   "label": "fix now",
+   "via": [
+    [
+     12.5,
+     0
+    ],
+    [
+     12.5,
+     2
     ]
    ]
   },
@@ -2776,7 +2998,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 14.2,
      "d": 1.0,
      "packet": "last step",
-     "log": "step 2 is the last step: no per-step round -> full suite"
+     "log": "step 2 is the last step: no per-step round -> full suite, unless a project cadence rule replaces it"
     },
     {
      "edge": "e_suite_spec",
@@ -2832,14 +3054,14 @@ window.PV=window.PV||[];window.PV.push(
      "t": 19.8,
      "d": 0.6,
      "packet": "round2.md",
-     "log": "codex-triage round 2: zero P0/P1, 1 standalone P2"
+     "log": "codex-triage round 2: the P1 is no longer reported, 1 standalone P2"
     },
     {
      "edge": "e_tri_clean",
      "t": 20.5,
      "d": 0.5,
      "packet": "verdict",
-     "log": "clean = zero P0/P1"
+     "log": "clean = zero P0/P1: the loop has ended"
     },
     {
      "edge": "e_clean_fod",
@@ -2849,29 +3071,64 @@ window.PV=window.PV||[];window.PV.push(
      "log": "one AskUserQuestion: the standalone findings of every round"
     },
     {
-     "edge": "e_fod_close",
+     "edge": "e_fod_fix",
      "t": 23.3,
-     "d": 0.8,
+     "d": 1.0,
      "packet": "fix now",
-     "log": "owner: fix now -> one fixer for the set, no re-challenge"
+     "log": "owner: fix now -> one fixer for the set"
+    },
+    {
+     "edge": "e_fix_wcodex",
+     "t": 24.4,
+     "d": 1.2,
+     "packet": "fix commit",
+     "log": "codex gate: the whole range is re-challenged at the new HEAD (global/CLAUDE.md:27)"
+    },
+    {
+     "edge": "e_wcodex_tri",
+     "t": 25.7,
+     "d": 0.6,
+     "packet": "round3.md",
+     "log": "codex-triage round 3: no P0/P1 at the new HEAD"
+    },
+    {
+     "edge": "e_tri_clean",
+     "t": 26.4,
+     "d": 0.5,
+     "packet": "verdict",
+     "log": "master recomputes the counts: clean again"
+    },
+    {
+     "edge": "e_clean_fod",
+     "t": 27.0,
+     "d": 1.0,
+     "packet": "fixed set",
+     "log": "clean at the new HEAD -> back to the fix-or-defer gate"
+    },
+    {
+     "edge": "e_fod_close",
+     "t": 28.2,
+     "d": 0.8,
+     "packet": "fixed",
+     "log": "owner: set fixed, nothing left to ask -> close-out"
     },
     {
      "edge": "e_close_push",
-     "t": 24.2,
+     "t": 29.1,
      "d": 0.8,
      "packet": "N commits",
-     "log": "suite again: exit 0, counts shown; no live agents -> push gate"
+     "log": "suite again (or the project cadence rule's tests): exit 0, counts shown; no live agents -> push gate"
     },
     {
      "edge": "e_push_ship",
-     "t": 26.3,
+     "t": 31.2,
      "d": 0.6,
      "packet": "push",
      "log": "owner approves the push -> PR -> merge + deploy"
     },
     {
      "edge": "e_ship_verify",
-     "t": 27.0,
+     "t": 31.9,
      "d": 0.7,
      "packet": "deployed",
      "log": "post-deploy verify: the real user flow driven, evidence shown"
@@ -2880,7 +3137,7 @@ window.PV=window.PV||[];window.PV.push(
   },
   {
    "id": "b",
-   "title": "delegated approval, two stage-5 rounds, then defer",
+   "title": "delegated approval, carried P1 deferred, clean at round 2",
    "steps": [
     {
      "edge": "e_req_size",
@@ -2985,7 +3242,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 12.7,
      "d": 1.0,
      "packet": "last step",
-     "log": "last step: no per-step round -> full suite"
+     "log": "last step: no per-step round -> full suite, unless a project cadence rule replaces it"
     },
     {
      "edge": "e_suite_wcodex",
@@ -3041,28 +3298,28 @@ window.PV=window.PV||[];window.PV.push(
      "t": 19.0,
      "d": 1.2,
      "packet": "fix commit",
-     "log": "fix committed -> re-challenge, round 2"
+     "log": "fix committed -> re-challenge the new HEAD (round 2)"
     },
     {
      "edge": "e_wcodex_tri",
      "t": 20.3,
      "d": 0.6,
      "packet": "round2.md",
-     "log": "round 2: 1 P1 left, 2 standalone P2"
+     "log": "round 2: the carried P1 is reported again, 2 standalone P2"
     },
     {
      "edge": "e_tri_clean",
      "t": 21.0,
      "d": 0.5,
      "packet": "verdict",
-     "log": "two rounds, then stop: there is no round 3"
+     "log": "the owner took the carried P1 out: zero P0/P1 in the loop = clean"
     },
     {
      "edge": "e_clean_index",
      "t": 21.6,
      "d": 1.0,
-     "packet": "open P1",
-     "log": "the open P1 is deferred with an index line"
+     "packet": "carried P1",
+     "log": "the carried P1 is deferred with an index line"
     },
     {
      "edge": "e_clean_fod",
@@ -3090,7 +3347,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 25.2,
      "d": 0.8,
      "packet": "N commits",
-     "log": "suite again, exit 0; no live agents -> push gate names the open P1"
+     "log": "suite again (or the project cadence rule's tests), exit 0; no live agents -> push gate names the deferred P1"
     },
     {
      "edge": "e_push_ship",

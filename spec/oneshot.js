@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "one-shot path",
  "key": "3",
  "doctrine": {
-  "kit_sha": "29fc19a",
-  "cc_validated": "2.1.294",
-  "extracted": "2026-10-12"
+  "kit_sha": "64b4512",
+  "cc_validated": "2.1.309",
+  "extracted": "2026-10-23"
  },
  "lanes": [
   {
@@ -87,7 +87,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 428,
+        "line": 611,
         "quote": "product edits without a one-shot/pipeline call line"
        }
       ]
@@ -112,7 +112,24 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "options": [],
     "metrics": [],
-    "gaps": [],
+    "gaps": [
+     {
+      "text": "Report C5: 41d1045b's call line read 'one-shot \u2026 UI built to a given spec, about 8 files \u2026 open picks take the recommended default'; the master then wrote five product files itself. CLAUDE.md:54 excludes UI choices from one-shots and allows inline work only for trivial changes.",
+      "kind": "report",
+      "src": [
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 55,
+        "quote": "The master wrote product code inline."
+       },
+       {
+        "file": "~/Dev/pipeline-watch/reports/2026-10-19.md",
+        "line": 55,
+        "quote": "CLAUDE.md:54 excludes UI choices from one-shots, and allows inline work only for trivial changes."
+       }
+      ]
+     }
+    ],
     "src": [
      {
       "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
@@ -276,7 +293,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 445,
+        "line": 629,
         "quote": "on product file inside pipeline"
        }
       ]
@@ -286,18 +303,23 @@ window.PV=window.PV||[];window.PV.push(
     "metrics": [],
     "gaps": [
      {
-      "text": "Report A1: this gate's analyzer flag also counts files other processes changed during a master's Bash command (2.1.293) and files a git merge/switch/checkout/rebase moved; 252 of ~270 flag lines were false. Proposal: the flag skips both.",
-      "kind": "report",
+      "text": "Tech debt (pipeline-gaps arc bundle, items 7 and 10): the analyzer's Bash-write flag still counts writes by other sessions in the same checkout (false flags), and a shell-expanded option ($(\u2026), $VAR) passes its read-only allowlist (a real write goes unflagged).",
+      "kind": "tech-debt",
       "src": [
        {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 7,
-        "quote": "analyze-arcs: the Bash changed-files record over-reports."
+        "file": "~/Dev/claude-code-setup/docs/tech-debt.md",
+        "line": 34,
+        "quote": "Analyzer blind spots and limits"
        },
        {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 14,
-        "quote": "252 of about 270 flag lines are false; none was real."
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 40,
+        "quote": "Writes by other sessions in the same checkout stay counted."
+       },
+       {
+        "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+        "line": 64,
+        "quote": "Analyzer: a shell-expanded option passes `cannot_write`"
        }
       ]
      }
@@ -372,12 +394,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 439,
+        "line": 622,
         "quote": "named spawn {s['type']} name={s['name']}"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 435,
+        "line": 618,
         "quote": "unpinned spawn {s['type']}"
        }
       ]
@@ -427,7 +449,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 441,
+        "line": 624,
         "quote": "codex-challenge run in the foreground"
        }
       ]
@@ -449,7 +471,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 442,
+        "line": 625,
         "quote": "--out outside scratchpad/docs/reviews"
        }
       ]
@@ -665,7 +687,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "master",
     "model": "opus \u00b7 xhigh (settings model + modelSettings)",
-    "does": "Recomputes the counts from the verdict lines. Round 1 P0/P1 go to one fixer; round 2 re-challenges the new HEAD and its verdict is final.",
+    "does": "Recomputes the counts from the verdict lines. Each round's P0/P1 go to a fixer and the next round re-challenges the new HEAD until clean: no round cap, and the stage-5 owner check-in at round 5 and every fifth round after it.",
     "inputs": [
      "triaged verdict"
     ],
@@ -701,7 +723,7 @@ window.PV=window.PV||[];window.PV.push(
     "options": [],
     "metrics": [
      {
-      "name": "sessions past round 2 (2311444a is a one-shot session; 051c082e not opened)",
+      "name": "sessions that ran a round 3 or later (2311444a is a one-shot session; 051c082e not opened)",
       "value": "2311444a \u00d72",
       "as_of": "2026-10-12",
       "src": [
@@ -746,7 +768,7 @@ window.PV=window.PV||[];window.PV.push(
    "col": 8,
    "kind": "sub",
    "title": "fixer",
-   "sub": "round-1 P0/P1",
+   "sub": "each round's P0/P1",
    "produces": "fix commits",
    "card": {
     "actor": "fixer (fresh per finding set)",
@@ -785,12 +807,12 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 438,
+        "line": 621,
         "quote": "pinned {s['model']} (doctrine {want})"
        },
        {
         "file": "~/Dev/claude-code-setup/skills/analyze-arcs/scripts/analyze.py",
-        "line": 361,
+        "line": 528,
         "quote": "' \u2014 reason stated' if reason else ' \u2014 no reason in prompt'"
        }
       ]
@@ -827,7 +849,7 @@ window.PV=window.PV||[];window.PV.push(
      {
       "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
       "line": 22,
-      "quote": "round 1's P0/P1 go to fixers"
+      "quote": "each round's P0/P1 go to fixers"
      }
     ]
    }
@@ -845,7 +867,7 @@ window.PV=window.PV||[];window.PV.push(
     "model": "opus \u00b7 xhigh (settings model + modelSettings)",
     "does": "The change counts as done only after the codex run and its triage verdict. A one-shot skips ceremony, never review.",
     "inputs": [
-     "clean verdict, or round 2 final"
+     "clean verdict, or P0/P1 taken out by the owner"
     ],
     "artifacts": [
      "verdict shown"
@@ -930,6 +952,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "If it hasn't run, say \"unreviewed, not merging\"."
        }
       ]
+     },
+     {
+      "rule": "A commit after the clean verdict that touches only docs/reviews/, docs/todos/, the TODO index or handoff docs does not reopen the codex gate or a one-shot's review; the push ask shows git diff --stat <reviewed-head>..HEAD.",
+      "evidence": "git diff --stat <reviewed-head>..HEAD, shown in the push ask",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 27,
+        "quote": "A commit after the clean verdict that touches only `docs/reviews/`, `docs/todos/`"
+       },
+       {
+        "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+        "line": 27,
+        "quote": "does not reopen this gate or a one-shot's review; the push ask shows `git diff --stat <reviewed-head>..HEAD`"
+       }
+      ]
      }
     ],
     "options": [
@@ -937,24 +976,7 @@ window.PV=window.PV||[];window.PV.push(
      "hold: the work stays local"
     ],
     "metrics": [],
-    "gaps": [
-     {
-      "text": "Report C1, one-shot case: 2311444a ran a third one-shot round after its docs commit, while other masters pushed docs-only deltas past the gated head. Whether a docs-only commit after the verdict reopens the gate is read two ways.",
-      "kind": "report",
-      "src": [
-       {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 41,
-        "quote": "That is a third one-shot round"
-       },
-       {
-        "file": "~/Dev/pipeline-watch/reports/2026-10-12.md",
-        "line": 47,
-        "quote": "a push gate that sessions read two ways"
-       }
-      ]
-     }
-    ],
+    "gaps": [],
     "src": [
      {
       "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
@@ -1092,7 +1114,7 @@ window.PV=window.PV||[];window.PV.push(
    "exit": "b",
    "enter": "t",
    "kind": "flow",
-   "label": "round 1 P0/P1"
+   "label": "each round's P0/P1"
   },
   {
    "id": "e_fix_cdx",
@@ -1112,12 +1134,17 @@ window.PV=window.PV||[];window.PV.push(
     ]
    ],
    "label": "re-challenge",
-   "bound": "2 rounds, round 2 final",
+   "bound": "owner check-in at round 5 and every fifth round after it",
    "src": [
     {
      "file": "~/Dev/claude-code-setup/skills/feature-workflow/SKILL.md",
      "line": 22,
-     "quote": "round 2 re-challenges the resulting HEAD and its verdict is final"
+     "quote": "When round 5 \u2014 and every fifth round after it \u2014 still has P0/P1 in the loop, ask ONE AskUserQuestion"
+    },
+    {
+     "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
+     "line": 54,
+     "quote": "then one `codex-triage` spawn on that file under stage-5 rules"
     }
    ]
   },
@@ -1274,7 +1301,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 7.4,
      "d": 0.9,
      "packet": "fix commit",
-     "log": "re-challenge on the new HEAD under its own --out name; round 2 is final"
+     "log": "re-challenge on the new HEAD under its own --out name; the loop runs until clean"
     },
     {
      "edge": "e_cdx_tri",
@@ -1288,7 +1315,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 9.5,
      "d": 0.8,
      "packet": "verdict",
-     "log": "codex-triage verdict for round 2: zero P0/P1"
+     "log": "codex-triage verdict for round 2: the P1 is no longer reported, zero P0/P1"
     },
     {
      "edge": "e_clean_done",
@@ -1336,13 +1363,18 @@ window.PV=window.PV||[];window.PV.push(
  ],
  "unplaced": [
   {
-   "text": "Whether stage 5's fix-or-defer question and its open-P0 question apply to a one-shot.",
-   "reason": "CLAUDE.md says triage runs 'under stage-5 rules' without listing which. The view maps triage, the two-round fix loop and the push gate only.",
+   "text": "Whether stage 5's fix-or-defer question, its contract gate and its round-5 check-in apply to a one-shot.",
+   "reason": "CLAUDE.md says triage runs 'under stage-5 rules' without listing which, and a one-shot never loads the skill that states them. The view maps triage, the fix loop and the push gate only.",
    "src": [
     {
      "file": "~/Dev/claude-code-setup/global/CLAUDE.md",
      "line": 54,
      "quote": "then one `codex-triage` spawn on that file under stage-5 rules"
+    },
+    {
+     "file": "~/Dev/claude-code-setup/docs/todos/deferred-pipeline-gaps-arc.md",
+     "line": 23,
+     "quote": "One-shot sessions never load the skill."
     }
    ]
   }
