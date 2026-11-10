@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "model / effort routing",
  "key": "5",
  "doctrine": {
-  "kit_sha": "64b4512",
-  "cc_validated": "2.1.309",
-  "extracted": "2026-10-23"
+  "kit_sha": "299e7d3",
+  "cc_validated": "2.1.321",
+  "extracted": "2026-11-10"
  },
  "lanes": [
   {
@@ -133,7 +133,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "The fixer runs on Opus here, with a one-line reason stated at the spawn."
        },
        {
@@ -169,6 +169,18 @@ window.PV=window.PV||[];window.PV.push(
         "file": "global/CLAUDE.md",
         "line": 39,
         "quote": "codebase search \u2192 the kit's `explorer` agent (sonnet, medium, read-only)"
+       }
+      ]
+     },
+     {
+      "rule": "Every spawn the pin list does not name stays on Sonnet whatever its subject, security included, unless the owner asks for Opus for that task.",
+      "evidence": "none",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "global/CLAUDE.md",
+        "line": 39,
+        "quote": "every other spawn stays on Sonnet whatever its subject, security included, unless I ask for Opus for that task"
        }
       ]
      }
@@ -250,7 +262,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "`step-executor`/`team-executor` cap at 200 turns, `fixer` at 150, `codex-triage` at 60"
        }
       ]
@@ -354,7 +366,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "`step-executor`/`team-executor` cap at 200 turns"
        }
       ]
@@ -410,7 +422,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "The fixer runs on Opus here, with a one-line reason stated at the spawn."
        },
        {

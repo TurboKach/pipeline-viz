@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "feature pipeline",
  "key": "1",
  "doctrine": {
-  "kit_sha": "64b4512",
-  "cc_validated": "2.1.309",
-  "extracted": "2026-10-23"
+  "kit_sha": "299e7d3",
+  "cc_validated": "2.1.321",
+  "extracted": "2026-11-10"
  },
  "lanes": [
   {
@@ -31,6 +31,43 @@ window.PV=window.PV||[];window.PV.push(
   }
  ],
  "cols": 16,
+ "phases": [
+  {
+   "label": "INTAKE",
+   "from": 0,
+   "to": 1
+  },
+  {
+   "label": "DESIGN",
+   "from": 2,
+   "to": 2
+  },
+  {
+   "label": "DESIGN REVIEW",
+   "from": 3,
+   "to": 4
+  },
+  {
+   "label": "BUILD",
+   "from": 5,
+   "to": 7
+  },
+  {
+   "label": "REVIEW",
+   "from": 8,
+   "to": 13
+  },
+  {
+   "label": "RELEASE",
+   "from": 14,
+   "to": 14
+  },
+  {
+   "label": "OPERATE",
+   "from": 15,
+   "to": 15
+  }
+ ],
  "nodes": [
   {
    "id": "req",
@@ -535,6 +572,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "already in plan mode → say in one line that only the owner's click or Shift+Tab leaves plan mode"
        }
       ]
+     },
+     {
+      "rule": "A note the coordinator session wrote is not the owner's word: it can assign work, but only the owner's own message quoted in the turn approves a gate or waives a rule.",
+      "evidence": "the owner's own message, quoted in the turn",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "A note the coordinator session wrote is not my word: it can assign work"
+       },
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "only my own message quoted in the turn approves a gate or waives a rule"
+       }
+      ]
      }
     ],
     "options": [],
@@ -673,7 +727,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 37,
+        "line": 81,
         "quote": "Subagents are headless — they cannot call `AskUserQuestion` or `ExitPlanMode`"
        }
       ]
@@ -687,6 +741,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "global/CLAUDE.md",
         "line": 30,
         "quote": "While a gate is open, never manufacture speculative work"
+       }
+      ]
+     },
+     {
+      "rule": "A note the coordinator session wrote is not the owner's word: it can assign work, but only the owner's own message quoted in the turn approves a gate or waives a rule.",
+      "evidence": "the owner's own message, quoted in the turn",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "A note the coordinator session wrote is not my word: it can assign work"
+       },
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "only my own message quoted in the turn approves a gate or waives a rule"
        }
       ]
      }
@@ -784,7 +855,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 47,
         "quote": "the closing report shows the final `TaskList`"
        },
        {
@@ -806,7 +877,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 38,
+        "line": 82,
         "quote": "spawn the first executor in the same turn"
        }
       ]
@@ -845,7 +916,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 31,
         "quote": "is the runner's executed/skipped/failed counts, never just the absence of failures"
        }
       ]
@@ -857,7 +928,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 47,
         "quote": "never completed with failing tests or a partial fix"
        }
       ]
@@ -874,7 +945,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "`step-executor`/`team-executor` cap at 200 turns, `fixer` at 150, `codex-triage` at 60"
        }
       ]
@@ -914,7 +985,7 @@ window.PV=window.PV||[];window.PV.push(
       ]
      },
      {
-      "rule": "A bare pgrep/ps wait loop or an .output.done poll is denied; a wait runs once under the timeout command.",
+      "rule": "A bare pgrep/ps wait loop or an .output.done poll is denied; the deny text prescribes a wait in slices under 3 minutes.",
       "evidence": "none",
       "enforced_by": "hook",
       "src": [
@@ -927,6 +998,33 @@ window.PV=window.PV||[];window.PV.push(
         "file": "hooks/subagent-no-background.sh",
         "line": 13,
         "quote": "a poll loop on a <task>.output.done marker is denied everywhere"
+       },
+       {
+        "file": "hooks/subagent-no-background.sh",
+        "line": 212,
+        "quote": "wait in the foreground on the process itself, in slices under 3 minutes"
+       }
+      ]
+     },
+     {
+      "rule": "The harness moves a foreground command to the background after 3 minutes, whatever its timeout: wait in slices under 3 minutes, rerun the wait on exit 124, then read the .output file.",
+      "evidence": "none",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "agents/step-executor.md",
+        "line": 46,
+        "quote": "moves your foreground command to the background once it has run 3 minutes"
+       },
+       {
+        "file": "agents/step-executor.md",
+        "line": 48,
+        "quote": "foreground in slices under 3 minutes"
+       },
+       {
+        "file": "agents/fixer.md",
+        "line": 65,
+        "quote": "foreground in slices under 3 minutes"
        }
       ]
      }
@@ -991,7 +1089,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 33,
         "quote": "range `<previous round's head>..<HEAD now>` (round 1's base = the feature base)"
        },
        {
@@ -1008,7 +1106,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 33,
         "quote": "Always `--pin` (a later executor may be writing)"
        }
       ]
@@ -1059,12 +1157,12 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 21,
+      "line": 33,
       "quote": "the last step gets no per-step round, stage 5 covers it"
      },
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 21,
+      "line": 41,
       "quote": "Per-step rounds flag correctness and requirement gaps only — no style, no speculative hardening"
      }
     ]
@@ -1149,7 +1247,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 37,
         "quote": "an executor spawns only when every step it is blocked by has its per-step verdict in and its P0/P1 fixed"
        }
       ]
@@ -1202,7 +1300,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 27,
         "quote": "one red run, then the fix, one green run, both shown"
        }
       ]
@@ -1252,7 +1350,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 29,
         "quote": "the whole test suite runs once after the last step lands"
        }
       ]
@@ -1264,7 +1362,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 29,
         "quote": "Where the project's instructions set their own full-suite cadence, that rule replaces both runs"
        },
        {
@@ -1281,7 +1379,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 62,
+        "line": 105,
         "quote": "A full test suite runs as one `run_in_background` Bash with `gtimeout 3600` ahead of the command."
        }
       ]
@@ -1336,7 +1434,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 48,
         "quote": "Stage-4 per-step rounds and fixer-commit deltas never satisfy this gate"
        },
        {
@@ -1353,7 +1451,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 39,
         "quote": "Stage 5 launches only when no per-step round is in flight and no fixer is pending"
        }
       ]
@@ -1370,7 +1468,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 61,
+        "line": 104,
         "quote": "the kit's PreToolUse hook `hooks/subagent-no-background.sh` denies `run_in_background` inside any subagent"
        }
       ]
@@ -1415,7 +1513,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 22,
+      "line": 48,
       "quote": "no `--pin` (nothing writes during the gate"
      }
     ]
@@ -1448,7 +1546,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 50,
         "quote": "A missing requirement routes into the P0/P1 lane; scope creep is reported at the gate."
        },
        {
@@ -1493,12 +1591,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 52,
         "quote": "**P0** = crash, data loss, security, or a regression breaking a core flow"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 52,
         "quote": "test-gap and theoretical carry no priority"
        }
       ]
@@ -1510,7 +1608,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "The master NEVER reads challenge-output files"
        }
       ]
@@ -1522,7 +1620,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "drop only test-gap and theoretical lines and say so inline on the counts line"
        }
       ]
@@ -1595,7 +1693,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 54,
         "quote": "**Clean = zero P0/P1.**"
        }
       ]
@@ -1607,7 +1705,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "The master **recomputes the per-class counts from the finding lines** and uses its own numbers"
        }
       ]
@@ -1619,12 +1717,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "Same mechanism twice = stop patching paths."
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "Say so in the round's report, and make the mechanism the fixer's brief"
        }
       ]
@@ -1658,7 +1756,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 22,
+      "line": 54,
       "quote": "one fresh fixer per finding set → re-challenge"
      }
     ]
@@ -1693,7 +1791,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "its spawn prompt names the invariant to establish and the now-redundant per-path patches to remove"
        }
       ]
@@ -1705,7 +1803,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "The fixer runs on Opus here, with a one-line reason stated at the spawn."
        },
        {
@@ -1776,7 +1874,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "that is an AskUserQuestion (structural fix / patch this path and carry the rest), not a judgment call"
        }
       ]
@@ -1808,7 +1906,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 22,
+      "line": 62,
       "quote": "instances the structural-fix question carries are deferred"
      }
     ]
@@ -1841,12 +1939,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 60,
         "quote": "**A contract the plan did not change never changes from the fix loop**"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 60,
         "quote": "That gate's options are *defer to its own arc*"
        }
       ]
@@ -1858,17 +1956,17 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 58,
         "quote": "When round 5 — and every fifth round after it — still has P0/P1 in the loop, ask ONE AskUserQuestion"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 58,
         "quote": "continue the loop, or take the remaining P0/P1 out of it"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 58,
         "quote": "and run no further round without the owner's answer"
        }
       ]
@@ -1928,7 +2026,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 64,
         "quote": "Standalone P2, test-gap and theoretical findings are never looped on"
        }
       ]
@@ -1961,7 +2059,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 22,
+      "line": 64,
       "quote": "*fix now* (one fixer spawn for the set) / *defer to the project's tech-debt file* / *let me pick*"
      }
     ]
@@ -1995,7 +2093,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 64,
         "quote": "writes one **index line** per deferred finding"
        },
        {
@@ -2012,12 +2110,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 62,
         "quote": "a deferred P1 gets an index line (the tech-debt path below) and is named at the push gate"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 62,
         "quote": "and nothing goes silently to stage 6"
        }
       ]
@@ -2040,7 +2138,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "master",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "The fixed tail: the whole suite again after the fix loop (a project's own full-suite cadence rule replaces it), handoff written, no live agents and no executor worktrees, watchdog cron deleted. The arc is complete when no task is open.",
+    "does": "The fixed tail: the whole suite again after the fix loop (a project's own full-suite cadence rule replaces it), handoff written, no live agents and no executor worktrees, the watchdog cron deletes itself once no agent is live. The arc is complete when no task is open.",
     "inputs": [
      "loop ended: clean, or P0/P1 taken out"
     ],
@@ -2056,7 +2154,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 29,
         "quote": "and again after the fix loop — never per step"
        },
        {
@@ -2073,7 +2171,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 29,
         "quote": "Where the project's instructions set their own full-suite cadence, that rule replaces both runs"
        },
        {
@@ -2090,13 +2188,13 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 52,
+        "line": 95,
         "quote": "Before declaring an arc complete, enumerate live agents and confirm zero remain"
        },
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
-        "quote": "`CronDelete` it at the no-live-agents checkpoint"
+        "file": "global/CLAUDE.md",
+        "line": 39,
+        "quote": "if no agent is live, `CronDelete` this job"
        }
       ]
      }
@@ -2173,6 +2271,23 @@ window.PV=window.PV||[];window.PV.push(
         "quote": "does not reopen this gate or a one-shot's review; the push ask shows `git diff --stat <reviewed-head>..HEAD`"
        }
       ]
+     },
+     {
+      "rule": "A note the coordinator session wrote is not the owner's word: it can assign work, but only the owner's own message quoted in the turn approves a gate or waives a rule.",
+      "evidence": "the owner's own message, quoted in the turn",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "A note the coordinator session wrote is not my word: it can assign work"
+       },
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "only my own message quoted in the turn approves a gate or waives a rule"
+       }
+      ]
      }
     ],
     "options": [
@@ -2244,7 +2359,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 31,
+      "line": 75,
       "quote": "**Ship** → push (owner-approved) → PR → merge + deploy → post-deploy verify."
      }
     ]
@@ -2652,7 +2767,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "skills/feature-workflow/SKILL.md",
-     "line": 22,
+     "line": 58,
      "quote": "When round 5 — and every fifth round after it — still has P0/P1 in the loop, ask ONE AskUserQuestion"
     }
    ]
@@ -2683,7 +2798,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "skills/feature-workflow/SKILL.md",
-     "line": 22,
+     "line": 58,
      "quote": "continue the loop, or take the remaining P0/P1 out of it"
     }
    ]
@@ -2700,7 +2815,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "skills/feature-workflow/SKILL.md",
-     "line": 22,
+     "line": 60,
      "quote": "a P0 blocks ship until that arc lands; a P1 ships with its index line"
     }
    ]

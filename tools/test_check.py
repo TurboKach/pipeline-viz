@@ -112,6 +112,45 @@ class UnhashableIds(unittest.TestCase):   # finding 4
         self.assertEqual(failures[:15], [], '%d crashes' % len(failures))
 
 
+class Phases(unittest.TestCase):   # optional SDLC band: sorted, non-overlapping, inside 0..cols-1, at most 8
+    def with_phases(self, phases):
+        obj = fixture()
+        obj['phases'] = phases
+        return validate(obj)
+
+    def test_valid_phases_are_accepted(self):
+        self.assertEqual(self.with_phases([{'label': 'A', 'from': 0, 'to': 1}, {'label': 'B', 'from': 2, 'to': 2}]), [])
+
+    def test_eight_phases_are_accepted(self):
+        self.assertEqual(self.with_phases([{'label': 'X', 'from': i, 'to': i} for i in range(8)]), [])
+
+    def test_the_feature_spec_phases_are_accepted(self):
+        self.assertTrue(fixture()['phases'])
+        self.assertEqual(validate(fixture()), [])
+
+    def test_each_bad_phase_list_is_an_error(self):
+        cols = fixture()['cols']
+        ph = lambda a, b, label='X': {'label': label, 'from': a, 'to': b}
+        bad = {
+            'unsorted': [ph(3, 4), ph(0, 1)],
+            'overlapping': [ph(0, 3), ph(3, 5)],
+            'past the last column': [ph(0, cols)],
+            'negative from': [ph(-1, 2)],
+            'from after to': [ph(4, 2)],
+            'more than 8': [ph(i, i) for i in range(9)],
+            'label over the limit': [ph(0, 1, 'X' * (check.LIM_PHASE_LABEL + 1))],
+            'empty label': [ph(0, 1, '')],
+            'unknown key': [dict(ph(0, 1), color='red')],
+            'float column': [ph(0, 1.5)],
+            'bool column': [ph(True, 2)],
+            'not a list': {'label': 'X'},
+            'null': None,
+        }
+        for name, phases in bad.items():
+            with self.subTest(name):
+                self.assertTrue(self.with_phases(phases), name)
+
+
 class NumericBounds(unittest.TestCase):   # stage-5 P2: validate never raises on a number
     HUGE = [1e308, -1e308, 1e300, 10 ** 308, -10 ** 308, 2 ** 1023, 1e-320, 0.25, -0.5000001, 1e15, -1e15]
 
@@ -327,7 +366,7 @@ class CitationPaths(KitRepo):   # finding 6: a citation is a kit-relative path r
                 self.assertIn(path, self.cite())
 
     def test_validate_view_reports_a_kit_or_sha_problem_once_not_per_citation(self):
-        obj = fixture()   # the real spec, stamped 64b4512, read from the real kit
+        obj = fixture()   # the real spec, read from the real kit at its own stamp
         obj['doctrine']['kit_sha'] = 'deadbee'
         errs = validate(obj)
         self.assertEqual(len([e for e in errs if 'doctrine.kit_sha' in e and 'not a commit' in e]), 1, errs)
@@ -774,9 +813,10 @@ class CitationLinkForm(unittest.TestCase):
     def test_real_card_links_are_code_view_links(self):
         dom = check.chrome_dom(check.page_url([('view', 'feature'), ('t', '7.8'), ('card', 'clean')]), '1400,900', 4000)
         links = self.blob_links(dom)
+        stamp = fixture()['doctrine']['kit_sha']
         self.assertEqual(len(links), 8, links)
         for h in links:
-            self.assertRegex(h, r'^%s64b4512/[^?#]+\?plain=1#L\d+$' % self.BASE)
+            self.assertRegex(h, r'^%s%s/[^?#]+\?plain=1#L\d+$' % (self.BASE, stamp))
 
     def test_every_file_type_gets_the_same_form(self):
         exts = ('skills/x/SKILL.md', 'skills/x/scripts/a.py', 'hooks/b.sh', 'settings.example.json')
@@ -803,7 +843,7 @@ class CitationLinkForm(unittest.TestCase):
                 f.write(check.WRAP_PREFIX + json.dumps(obj, indent=1) + check.WRAP_SUFFIX)
             url = pathlib.Path(d, 'index.html').as_uri() + '?view=feature&t=7.8&card=clean'
             links = self.blob_links(check.chrome_dom(url, '1400,900', 4000))
-        self.assertEqual(sorted(links), sorted('%s64b4512/%s?plain=1#L%d' % (self.BASE, f, ln) for f, ln in seen))
+        self.assertEqual(sorted(links), sorted('%s%s/%s?plain=1#L%d' % (self.BASE, obj['doctrine']['kit_sha'], f, ln) for f, ln in seen))
         self.assertEqual({l.split('?')[0].rsplit('.', 1)[1] for l in links}, {'md', 'py', 'sh', 'json'})
 
 
@@ -904,6 +944,270 @@ class LintResult(unittest.TestCase):   # lint-mode parsing and the pass rule
         self.assertGreater(check.shoot_width(16), check.shoot_width(11))
         self.assertGreaterEqual(check.shoot_width(1), check.MIN_SHOT_WIDTH)
         self.assertEqual(check.shoot_width(16), check.GUTTER_W + 16 * check.CELL_W + check.CANVAS_PAD + check.WRAP_PAD)
+
+
+class ExportFlow(unittest.TestCase):   # FLOW.md: a pure function of the specs
+    def views(self):
+        return [check.load_view(os.path.join(check.SPEC_DIR, v + '.js'))[0] for v in check.VIEW_IDS]
+
+    def test_escaping_mermaid(self):
+        out = check.esc_mermaid('a"b|c[d]<e>&#`f\ng')
+        for bad in '"|[]<>`\n':
+            self.assertNotIn(bad, out)
+        self.assertEqual(out, 'a#quot;b#124;c#91;d#93;#lt;e#gt;#amp;#35;#96;f g')
+
+    def test_escaping_cell(self):
+        out = check.esc_cell('a"b|c[d]<e>\ng')
+        self.assertEqual(out, 'a"b\\|c\\[d\\]&lt;e&gt; g')
+        self.assertNotIn('\n', out)
+        self.assertNotIn('<', out)
+
+    def test_hostile_text_cannot_break_out(self):
+        obj = fixture()
+        n = next(n for n in obj['nodes'] if n['kind'] == 'decision')
+        n['title'] = 'T"|[<x\ny'
+        n['card']['actor'] = 'A"|[<x\ny'
+        text = check.build_flow([obj])
+        block = text.split('```mermaid\n')[1].split('```')[0]
+        self.assertNotIn('T"|[<x', block)
+        row = [r for r in text.splitlines() if r.startswith('| T')][0]
+        self.assertNotIn('<x', row)
+        self.assertEqual(row.count('|') - row.count('\\|'), 10)   # 9 cells, no cell split by the text
+
+    def test_one_mermaid_block_per_view_and_one_row_per_decision_or_human(self):
+        views = self.views()
+        text = check.build_flow(views)
+        self.assertEqual(text.count('```mermaid\n'), len(views))
+        rows = [r for r in text.splitlines() if r.startswith('| ') and not r.startswith('| Decision')]
+        want = sum(1 for v in views for n in v['nodes'] if n['kind'] in ('decision', 'human'))
+        self.assertEqual(len(rows), want)
+        self.assertGreater(want, 0)
+
+    def test_mermaid_ids_are_safe_and_unique(self):
+        obj = fixture()
+        new_id = {n['id']: 'id with "odd" chars-%d' % i for i, n in enumerate(obj['nodes'])}
+        for n in obj['nodes']:
+            n['id'] = new_id[n['id']]
+        for e in obj['edges']:
+            e['from'], e['to'] = new_id[e['from']], new_id[e['to']]
+        block = check.view_mermaid(obj)
+        self.assertNotIn('odd', block)
+        self.assertEqual(sum(1 for l in block.splitlines() if ':::lane' in l), len(obj['nodes']))
+
+    def test_lanes_are_classes_and_prefixes_not_subgraphs(self):
+        for obj in self.views() + [fixture()]:
+            block = check.view_mermaid(obj)
+            self.assertNotIn('subgraph', block)
+            self.assertNotIn('\n  end', block)
+            lines = block.splitlines()
+            self.assertEqual(sum(1 for l in lines if l.startswith('  classDef lane')), len(obj['lanes']))
+            defs = [l for l in lines if ':::lane' in l]
+            self.assertEqual(len(defs), len(obj['nodes']))
+            by_id = {l['id']: (i, l) for i, l in enumerate(obj['lanes'])}
+            for i, n in enumerate(obj['nodes']):
+                li, lane = by_id[n['lane']]
+                line = defs[i]
+                self.assertTrue(line.startswith('  n%d' % i))
+                self.assertTrue(line.endswith(':::lane%d' % li))
+                self.assertIn('"%s: ' % check.esc_mermaid(lane['label'].lower()), line)
+            self.assertEqual(len({l.split()[2] for l in lines if l.startswith('  classDef lane')}), len(obj['lanes']))
+
+    def test_legend_names_every_lane_above_the_block(self):
+        obj = fixture()
+        text = check.build_flow([obj])
+        legend = text.split('```mermaid\n')[0].splitlines()[-2]
+        self.assertTrue(legend.startswith('Lanes: '))
+        for i, lane in enumerate(obj['lanes']):
+            self.assertIn('%s (%s)' % (lane['label'].lower(), check.lane_colour(i)[0]), legend)
+
+    def test_links_use_plain_line_anchor(self):
+        text = check.build_flow([fixture()])
+        sha = fixture()['doctrine']['kit_sha']
+        self.assertIn('%s/blob/%s/' % (check.KIT_URL, sha), text)
+        self.assertIn('?plain=1#L', text)
+
+    def test_back_edge_is_dashed_with_its_bound(self):
+        obj = fixture()
+        block = check.view_mermaid(obj)
+        back = [l for l in block.splitlines() if '.->' in l]
+        self.assertEqual(len(back), sum(1 for e in obj['edges'] if e['kind'] == 'back'))
+        self.assertTrue(all('bound: ' in l for l in back))
+
+    def test_phase_column(self):
+        obj = fixture()
+        n = next(n for n in obj['nodes'] if n['col'] == 0)
+        self.assertEqual(check.node_phase(obj, n), obj['phases'][0]['label'])
+        del obj['phases']
+        self.assertEqual(check.node_phase(obj, n), '—')
+
+    def test_deterministic(self):
+        views = self.views()
+        self.assertEqual(check.build_flow(views), check.build_flow(copy.deepcopy(views)))
+        self.assertEqual(check.build_flow(views), check.build_flow(self.views()))
+
+    def options_cell(self, obj, node_id):
+        title = next(n['title'] for n in obj['nodes'] if n['id'] == node_id)
+        row = [r for r in check.build_flow([obj]).splitlines() if r.startswith('| %s ' % title)][0]
+        return row.split(' | ')[5]
+
+    def test_unlabelled_decision_edge_option_is_the_target_title_not_its_id(self):
+        obj = fixture()
+        cell = self.options_cell(obj, 'deleg')   # deleg -> taste is labelled 'no'; deleg -> copy is not
+        self.assertEqual(cell, '1. no<br>2. PLAN → REPO')
+        self.assertNotIn('copy', cell)
+
+    def test_no_unlabelled_edge_in_the_real_flow_shows_its_target_id_as_an_option(self):
+        for v in self.views():
+            for n in v['nodes']:
+                if n['kind'] in ('decision', 'human') and not n['card']['options']:
+                    cell = check.decision_row(v, n).split(' | ')[5]
+                    options = [part.split('. ', 1)[-1] for part in cell.split('<br>')]
+                    titles = {m['id']: m['title'] for m in v['nodes']}
+                    for e in v['edges']:
+                        if e['from'] == n['id'] and not check.mermaid_edge_label(e) and titles[e['to']] != e['to']:   # a title may equal its id
+                            self.assertNotIn(e['to'], options, '%s/%s option is the node id %r' % (v['id'], n['id'], e['to']))
+
+    def run_export(self, flow_path, *argv):
+        out = io.StringIO()
+        with mock.patch.object(check, 'FLOW_PATH', flow_path), mock.patch.object(sys, 'argv', ['check.py', 'export'] + list(argv)), \
+                contextlib.redirect_stdout(out), self.assertRaises(SystemExit) as cm:
+            check.main()
+        return cm.exception.code, out.getvalue()
+
+    def test_export_and_check(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, 'FLOW.md')
+            self.assertEqual(self.run_export(path, '--check')[0], 1)   # missing file is stale
+            self.assertFalse(os.path.exists(path))                    # --check writes nothing
+            self.assertEqual(self.run_export(path)[0], 0)
+            first = pathlib.Path(path).read_bytes()
+            self.assertEqual(self.run_export(path)[0], 0)
+            self.assertEqual(pathlib.Path(path).read_bytes(), first)           # same spec, same bytes
+            self.assertEqual(self.run_export(path, '--check')[0], 0)
+            with open(path, 'ab') as f:
+                f.write(b'x')
+            code, msg = self.run_export(path, '--check')
+            self.assertEqual(code, 1)
+            self.assertEqual(len(msg.strip().splitlines()), 1)
+            self.assertEqual(pathlib.Path(path).read_bytes(), first + b'x')    # still untouched
+
+
+class Drift(KitRepo):   # drift: kit doctrine commits since the stamp; --hook never fails
+    def setUp(self):
+        super().setUp()
+        self.specs = tempfile.TemporaryDirectory()
+        self.addCleanup(self.specs.cleanup)
+        patch = mock.patch.object(check, 'SPEC_DIR', self.specs.name)
+        patch.start()
+        self.addCleanup(patch.stop)
+        for vid in check.VIEW_IDS:
+            self.write_spec(vid, self.sha1)
+
+    def write_spec(self, vid, sha):
+        obj = {'view': {'id': vid}, 'doctrine': {'kit_sha': sha},
+               'nodes': [{'card': {'gates': [{'src': [{'file': 'docs/a.md', 'line': 32, 'quote': 'beta quote here'}]}]}}]}
+        with open(os.path.join(self.specs.name, vid + '.js'), 'w') as f:
+            f.write(check.WRAP_PREFIX + json.dumps(obj) + check.WRAP_SUFFIX)
+
+    def run_drift(self, hook=False):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = check.cmd_drift(mock.Mock(hook=hook))
+        return code, out.getvalue()
+
+    def test_exit_0_at_the_stamp(self):
+        code, out = self.run_drift()
+        self.assertEqual(code, 0)
+        self.assertIn('map stamped %s · kit ' % self.sha1, out)
+        self.assertIn('0 doctrine commits since', out)
+
+    def test_exit_1_one_doctrine_commit_later_and_lists_its_subject(self):
+        self.commit('skills/x/SKILL.md', ['a'], 'change the skill')
+        code, out = self.run_drift()
+        self.assertEqual(code, 1)
+        self.assertIn('1 doctrine commits since', out)
+        self.assertIn('change the skill', out)
+
+    def test_a_cited_file_counts(self):
+        self.commit('docs/a.md', self.LINES + ['more'], 'edit cited file')
+        code, out = self.run_drift()
+        self.assertEqual(code, 1)
+        self.assertIn('edit cited file', out)
+
+    def test_a_file_neither_doctrine_nor_cited_does_not_count(self):
+        self.commit('docs/other.md', ['x'], 'unrelated')
+        self.commit('README.md', ['x'], 'readme')
+        code, out = self.run_drift()
+        self.assertEqual(code, 0)
+        self.assertIn('0 doctrine commits since', out)
+        self.assertNotIn('unrelated', out)
+
+    def test_at_most_20_subjects(self):
+        for i in range(22):
+            self.commit('hooks/h.sh', ['v%d' % i], 'bump %d' % i)
+        code, out = self.run_drift()
+        self.assertEqual(code, 1)
+        self.assertIn('22 doctrine commits since', out)
+        self.assertEqual(sum(1 for ln in out.splitlines() if ' bump ' in ln), 20)
+
+    def stamp_ahead_of_checkout(self):
+        sha2 = self.commit('skills/x/SKILL.md', ['a'], 'later')
+        for vid in check.VIEW_IDS:
+            self.write_spec(vid, sha2)
+        self.git('checkout', '-q', '--detach', self.sha1)   # the kit sits at a commit older than the stamp
+        return sha2
+
+    def test_stamp_not_an_ancestor_of_kit_head_is_a_problem_exit_1(self):
+        sha2 = self.stamp_ahead_of_checkout()
+        code, out = self.run_drift()
+        self.assertEqual(code, 1)
+        self.assertEqual(len(out.strip().splitlines()), 1)
+        self.assertIn('not an ancestor', out)
+        self.assertIn(sha2, out)
+        self.assertIn(self.git('rev-parse', '--short', 'HEAD'), out)   # the kit HEAD, which is the older commit
+
+    def test_hook_prints_the_not_an_ancestor_line_and_exits_0(self):
+        sha2 = self.stamp_ahead_of_checkout()
+        code, out = self.run_drift(hook=True)
+        self.assertEqual(code, 0)
+        self.assertEqual(len(out.strip().splitlines()), 1)
+        self.assertIn('not an ancestor', out)
+        self.assertIn(sha2, out)
+
+    def test_hook_is_silent_at_the_stamp(self):
+        self.assertEqual(self.run_drift(hook=True), (0, ''))
+
+    def test_hook_prints_the_line_one_commit_later_and_exits_0(self):
+        self.commit('agents/a.md', ['a'], 'change the agent')
+        code, out = self.run_drift(hook=True)
+        self.assertEqual(code, 0)
+        self.assertIn('1 doctrine commits since', out)
+        self.assertIn('change the agent', out)
+
+    def test_hook_with_a_missing_kit_exits_0_with_one_line(self):
+        with mock.patch.object(check, 'KIT', os.path.join(self.tmp.name, 'nope')):
+            code, out = self.run_drift(hook=True)
+            self.assertEqual(code, 0)
+            self.assertEqual(len(out.splitlines()), 1)
+            self.assertIn('kit repo not found', out)
+            code, out = self.run_drift()
+            self.assertEqual(code, 1)
+
+    def test_hook_with_a_broken_spec_exits_0(self):
+        with open(os.path.join(self.specs.name, 'feature.js'), 'w') as f:
+            f.write('not a spec')
+        code, out = self.run_drift(hook=True)
+        self.assertEqual(code, 0)
+        self.assertIn('feature', out)
+
+    def test_specs_that_disagree_are_an_error_naming_the_views(self):
+        sha2 = self.commit('skills/y.md', ['y'], 'two')
+        self.write_spec('meta', sha2)
+        code, out = self.run_drift()
+        self.assertEqual(code, 1)
+        self.assertIn('disagree', out)
+        self.assertIn('meta %s' % sha2, out)
+        self.assertEqual(self.run_drift(hook=True)[0], 0)
 
 
 class ChromeDomBounded(unittest.TestCase):   # a Chrome that never exits is a failure, not a hang

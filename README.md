@@ -39,7 +39,7 @@ The first line is the fixed wrapper line and the last line is `);`, each followe
 
 ```
 view:     {id, title, key, draft?, doctrine:{kit_sha, cc_validated, extracted}, lanes:[{id,label,sub}], cols,
-          nodes:[node], edges:[edge], scenarios:[scenario], unplaced?:[{text, reason, src[]}]}
+          phases?:[{label, from, to}], nodes:[node], edges:[edge], scenarios:[scenario], unplaced?:[{text, reason, src[]}]}
 node:     {id, lane, col, kind: input|stage|sub|codex|human|decision|output, title, sub, produces, card}
 card:     {actor, model, does, inputs[], artifacts[], gates:[gate], options[] (human stops),
           metrics:[{name, src[]}], gaps:[{text, kind: tech-debt|derived, src[]}], src[]}
@@ -55,6 +55,7 @@ src:      {file, line, quote}       # file: path relative to the kit root
 - Edge routing is automatic: anchors sit on the node side given by `exit` / `enter`; several edge ends on one side are spread along it in `edges[]` order. The first segment leaves outward, the last arrives inward, a gap between two points is filled with an L (or a Z when both axes are the same). Consecutive via points must share a row or column. `viz.js` and `check.py` hold the same routing code and the same node-box constants, each marked as the other's twin.
 - Every `src` field is a list, including `metrics[].src`. A metric is exactly `{name, src}`: what is counted and the kit line that computes it. `gaps[].kind = "derived"` is treated as a candidate, not an explicit gap.
 - `"none"` as gate evidence or back-edge bound means the doctrine states none; it needs no src and the page shows it as a candidate. An edge needs a `src` when its `bound` is text. `src[]` must not be empty on gates, metrics, gaps or edges with a text bound, except in a view marked `draft: true`.
+- `phases` (optional) is the SDLC band drawn above the columns: up to 8 entries, each `{label, from, to}` with integer column numbers (`from` and `to` inclusive, inside `0..cols-1`), label at most 14 characters. Entries are sorted by `from` and must not overlap. A view without `phases` draws no band; `FLOW.md` shows each decision's phase.
 - A scenario is a list of steps, each on an edge of the view, at second `t` for `d` seconds, with a `packet` label and a `log` line (`null` allowed). Steps form a connected path: each starts at one of the view's `input` nodes or at a node an earlier step reached; `t` and `d` are seconds, at most 60 each. `scenarios[0]` plays first; the page loops through the view's scenarios.
 - Text limits: node title 18, sub 22, produces 20, card text fields 280, lane label 12, lane sub 16, edge label and guard 24, packet 20, log 110, scenario title 60, view title 40.
 
@@ -74,6 +75,10 @@ python3 tools/check.py --kit PATH validate              # read the cited text fr
 python3 tools/check.py shoot --view feature --t 7.8 --card appr --overlay gaps,candidates
 python3 tools/check.py shoot --all      # every built view x {plain, gaps, candidates, metrics} + one card
 python3 tools/check.py lint             # exit 0 only with zero overlaps, no clipped card, subtitles >= 9 px
+python3 tools/check.py export           # write FLOW.md
+python3 tools/check.py export --check   # write nothing; exit 1 when FLOW.md is stale
+python3 tools/check.py drift            # kit doctrine commits since doctrine.kit_sha; exit 1 when there are any
+python3 tools/check.py drift --hook     # the same line only when there are any; always exit 0
 ```
 
 ```
@@ -81,6 +86,10 @@ python3 -B tools/repoint.py [--kit PATH] # re-point stale or out-of-file lines i
 ```
 
 `tools/repoint.py` re-points every citation whose `line` is stale or outside the file, when its quote occurs exactly once in the cited file (read at the stamped commit); it rewrites only `line`. It lists every other broken citation as `UNRESOLVED`, for a hand content fix: no hit, several hits, one hit whose quote does not fit the window there, or an error that is not about the line (a missing file, a bad path). Run it on specs whose only errors are line errors, then `check.py validate`. Its last line reads `citations N · broken N · repointed N · unresolved N`. Every spec write goes through its `load_spec` / `save_spec`: `load_spec` aborts unless the file round-trips byte-identical (wrapper, indent and escape mode kept), so a write changes only what the caller changed. Run python with `-B`: `repoint.py` imports `check`, so without it an untracked `tools/__pycache__/` appears.
+
+`export` writes `FLOW.md`, generated from `spec/*.js` and never edited by hand: per view a mermaid flowchart (nodes in spec order, labelled edges, back edges dashed with their bound) and a table of its decision and human-stop nodes (columns: SDLC phase, who decides, inputs, options, enforced by, evidence, source links at the stamped commit; the options are the node's outgoing edge labels, except a human stop, which states its own). Lanes are shown as colour plus a label prefix (`owner: SIZE CALL`), and a legend line under each view's heading names the colours. The file is a pure function of the specs, so `export --check` is the freshness test: it exits 1 and names the fix when `FLOW.md` differs from the generated text. Regenerate it after any spec change.
+
+`drift` tells whether the kit has moved on since the map was stamped. All six specs must carry the same `doctrine.kit_sha` (a disagreement is an error naming the views). It counts the kit commits in `<kit_sha>..HEAD` that touch the doctrine paths (`global`, `skills`, `agents`, `hooks`, `settings.example.json`, `install.sh`) or any file a spec cites, and prints `map stamped <sha> · kit <head> · N doctrine commits since` followed by at most 20 commit subjects. It exits 1 when N is above 0. With `--hook` it prints only when N is above 0 and always exits 0, also when the kit is missing or git fails (it then prints one line naming the problem), so it is safe as a Claude Code SessionStart hook: `python3 -B "$HOME/Dev/pipeline-viz/tools/check.py" drift --hook`. It only runs `git rev-list` and `git log` on the kit and writes nothing.
 
 `validate` and `repoint.py` need a clone of the kit that holds `doctrine.kit_sha`: by default the sibling directory `../claude-code-setup`, or the path given by `--kit` (before the subcommand). A missing kit, commit or file is an error message, not a crash. The page itself needs no kit.
 

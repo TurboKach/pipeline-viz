@@ -12,11 +12,15 @@ const NODE_FH = 0.55;            // node box height = NODE_FH * one lane
 // pixel size of a cell. check.py judges the layout in grid units; it holds CW and GUT only to size
 // the screenshot window (TWIN: tools/check.py "RENDER SIZE").
 // CW is wide enough that a 21-char subtitle (the longest in the specs) fits a node at >= 9 px.
-const CW = 156, LH = 140, GUT = 110, TOP = 22, PAD = 34;
+const CW = 156, LH = 140, GUT = 110, PAD = 34;
+// Top margin above the first lane. A view with `phases` gets PHASE_H more for its label row (build() sets TOP).
+const TOP_BASE = 22, PHASE_H = 24;
+let TOP = TOP_BASE;
 // The canvas never scales below this: a view wider than the window scrolls sideways instead.
 // 1 keeps every node subtitle at its drawn size, which is the >= 9 px floor lint checks.
 const MIN_SCALE = 1;
 // Public kit repo: every citation and the header's kit sha link here, at the commit the spec is stamped with.
+// TWIN: tools/check.py KIT_URL (FLOW.md's source links).
 const KIT_URL = 'https://github.com/TurboKach/claude-code-setup';
 const TXT_PAD = 8;               // node text is fitted to the box width minus this
 
@@ -211,6 +215,7 @@ function build() {
   V.lanes.forEach((l, i) => { laneIdx[l.id] = i; });
   V.nodes.forEach(n => { nodeById[n.id] = n; n.pos = [n.col, laneIdx[n.lane]]; });
   V.edges.forEach(e => { edgeById[e.id] = e; });
+  TOP = TOP_BASE + (V.phases ? PHASE_H : 0);
   const W = GUT + V.cols * CW + 8, H = TOP + V.lanes.length * LH + PAD;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.style.minWidth = Math.round(W * MIN_SCALE) + 'px';   // narrower windows scroll #stage sideways
@@ -221,6 +226,13 @@ function build() {
     el('rect', { x: 6, y: TOP + i * LH, width: W - 12, height: LH, rx: 4 }, g);
     txt(g, 16, TOP + i * LH + 20, l.label, '', 'start');
     txt(g, 16, TOP + i * LH + 36, l.sub, 'm', 'start');
+  });
+
+  (V.phases || []).forEach(p => {
+    const g = el('g', { class: 'phase' });
+    const x = GUT + p.from * CW + 3, w = (p.to - p.from + 1) * CW - 6;
+    el('rect', { x, y: 2, width: w, height: 18, rx: 3 }, g);
+    txt(g, x + w / 2, 15, p.label);
   });
 
   // anchors: edges sharing one node side are spread along it, in edge order
@@ -261,7 +273,7 @@ function build() {
   // may cross a foreign wire (its halo keeps it readable) but prefers not to.
   const hw = NODE_FW * CW / 2, hh = NODE_FH * LH / 2;
   const hard = V.nodes.map(n => { const [cx, cy] = px(n.pos); return [cx - hw - 2, cy - hh - 15, cx + hw + 2, cy + hh + 2]; });
-  svg.querySelectorAll('.lane text').forEach(t => { const b = t.getBBox(); hard.push([b.x - 1, b.y - 1, b.x + b.width + 1, b.y + b.height + 1]); });
+  svg.querySelectorAll('.lane text, .phase text').forEach(t => { const b = t.getBBox(); hard.push([b.x - 1, b.y - 1, b.x + b.width + 1, b.y + b.height + 1]); });
   const canvas = [4, 2, W - 4, H - 2];
   const placed = labelRects = [];
   nodeObst = V.nodes.map(n => { const [cx, cy] = px(n.pos); return [cx - hw, cy - hh, cx + hw, cy + hh]; });
@@ -587,7 +599,7 @@ function runLint() {
     const nodes = [...svg.querySelectorAll('.node')].map(g => ({ id: nid(g), g, box: ub(g.querySelector('rect,polygon')) }));
     const labels = [...svg.querySelectorAll('.wl')].map(t => ({ name: 'label ' + t.dataset.e, r: ub(t) }))
       .concat([...svg.querySelectorAll('.bound')].map(g => ({ name: 'badge ' + g.dataset.e, r: ub(g.querySelector('rect')) })));
-    const lanes = [...svg.querySelectorAll('.lane text')].map(t => ({ name: 'lane ' + t.textContent, r: ub(t) }));
+    const lanes = [...svg.querySelectorAll('.lane text, .phase text')].map(t => ({ name: 'lane ' + t.textContent, r: ub(t) }));
     const wires = [...svg.querySelectorAll('path.wire')].map(p => {
       const pts = p.getAttribute('d').slice(1).split(' L').map(x => x.split(',').map(Number));
       return { id: p.dataset.e, segs: pts.slice(1).map((b, i) => [pts[i], b]) };

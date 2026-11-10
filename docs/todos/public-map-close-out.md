@@ -20,8 +20,17 @@ fix-or-defer question.
 Both sit in the git reader that step 4 of the arc added: `check.py` runs `git -C <kit> …` and
 reads `git cat-file blob <kit_sha>:<file>`.
 
+Arc 2 (whole range `a6d9a60..6083dcc`, 0 P0/P1 after 3 rounds) left one more, deferred by the
+owner at its fix-or-defer question:
+
+- `[P2 conf:0.3] tools/check.py:1359` — `drift_report` resolves the kit HEAD separately in
+  `rev-parse`, `merge-base --is-ancestor`, `rev-list` and `log`. A kit checkout to an ancestor
+  between the ancestry check and the count makes the count 0, so `drift` exits 0 and skips the
+  not-an-ancestor error. This needs a concurrent kit checkout inside a sub-second run.
+
 **Depends.** Nothing.
 
 **Effort.** Small: clear `GIT_DIR` and its sibling variables in the environment of every git
-call, and pass `--no-replace-objects`; one test each on the temp git repo fixture
+call, and pass `--no-replace-objects`; in `drift_report`, resolve HEAD to a full sha once and
+pass that sha to every later call; one test each on the temp git repo fixture
 (`KitRepo` in `tools/test_check.py`).

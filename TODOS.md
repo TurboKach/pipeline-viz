@@ -7,4 +7,5 @@
 
 ## P3
 
-- **public-map arc close-out** — 2 theoretical codex leftovers in the git reader (inherited GIT_DIR, replace refs) → docs/todos/public-map-close-out.md
+- **public-map arc close-out** — 3 codex leftovers in the git reader (inherited GIT_DIR, replace refs, drift HEAD race) → docs/todos/public-map-close-out.md
+- **Top-level SDLC overview view** — one canvas for intake to ship, with the six views linked from their phases → docs/todos/sdlc-overview-view.md

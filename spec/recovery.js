@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "recovery & limits",
  "key": "2",
  "doctrine": {
-  "kit_sha": "64b4512",
-  "cc_validated": "2.1.309",
-  "extracted": "2026-10-23"
+  "kit_sha": "299e7d3",
+  "cc_validated": "2.1.321",
+  "extracted": "2026-11-10"
  },
  "lanes": [
   {
@@ -44,32 +44,32 @@ window.PV=window.PV||[];window.PV.push(
    "kind": "input",
    "title": "WATCHDOG CRON",
    "sub": "7,22,37,52 * * * *",
-   "produces": "idle check",
+   "produces": "silence check",
    "card": {
     "actor": "harness cron job, created by the master",
     "model": "—",
-    "does": "At the arc's first spawn the master creates one recurring session-only cron job on an off-minute quarter-hour. It fires only while the REPL is idle, the state of a master waiting on a notification.",
+    "does": "At a session's first background spawn of an executor, fixer, merger or general-purpose agent, pipeline or not, the master creates one recurring session-only watchdog on an off-minute quarter-hour. With no agent live, it deletes itself.",
     "inputs": [
-     "first spawn of the arc"
+     "first background executor, fixer, merger or general-purpose spawn"
     ],
     "artifacts": [
      "cron prompt in the master"
     ],
     "gates": [
      {
-      "rule": "One recurring session-only CronCreate job at the arc's first spawn; CronDelete at the no-live-agents checkpoint.",
+      "rule": "One recurring session-only CronCreate watchdog at the first background spawn of an executor, fixer, merger or general-purpose agent, pipeline or not; with no agent live, the job runs CronDelete on itself.",
       "evidence": "none",
       "enforced_by": "prose",
       "src": [
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
-        "quote": "at the arc's first spawn, `CronCreate` one recurring session-only job on an off-minute quarter-hour"
+        "file": "global/CLAUDE.md",
+        "line": 39,
+        "quote": "At a session's first background spawn of an executor, fixer, merger or `general-purpose` agent — pipeline or not"
        },
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
-        "quote": "`CronDelete` it at the no-live-agents checkpoint"
+        "file": "global/CLAUDE.md",
+        "line": 39,
+        "quote": "if no agent is live, `CronDelete` this job"
        }
       ]
      }
@@ -79,9 +79,14 @@ window.PV=window.PV||[];window.PV.push(
     "gaps": [],
     "src": [
      {
+      "file": "global/CLAUDE.md",
+      "line": 39,
+      "quote": "`CronCreate` one recurring session-only watchdog on an off-minute quarter-hour (`7,22,37,52 * * * *`)"
+     },
+     {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 36,
-      "quote": "Cron fires only while the REPL is idle"
+      "line": 80,
+      "quote": "The watchdog cron in global CLAUDE.md makes this check mechanical."
      }
     ]
    }
@@ -97,7 +102,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "master (cron prompt)",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "Lists this session's subagents/*.jsonl by mtime. An agent with no write for 10 min, or whose last commands repeat a pgrep/sleep wait, is read, stopped (TaskStop) and respawned for the remainder.",
+    "does": "Lists this session's subagents/*.jsonl by mtime. An agent with no write for 10 min is read, stopped (TaskStop) and respawned for the remainder.",
     "inputs": [
      "subagents/*.jsonl mtimes"
     ],
@@ -106,14 +111,14 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "gates": [
      {
-      "rule": "No transcript write for 10 min, or a repeating pgrep/sleep wait: read, stop (TaskStop), respawn for the remainder.",
+      "rule": "No transcript write for 10 min: read, stop (TaskStop), respawn for the remainder.",
       "evidence": "the transcript mtime in subagents/*.jsonl",
       "enforced_by": "prose",
       "src": [
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
-        "quote": "an agent with no write for 10 min, or whose last commands repeat a `pgrep`/`sleep` wait"
+        "file": "global/CLAUDE.md",
+        "line": 39,
+        "quote": "read, stop (`TaskStop`) and respawn for the remainder any agent with no write for 10 min"
        }
       ]
      },
@@ -160,12 +165,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
+        "line": 80,
         "quote": "A missing report is a read-the-transcript signal, never a wait."
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
+        "line": 80,
         "quote": "An API error that ends a subagent early is never delivered as its result — the master gets nothing."
        }
       ]
@@ -226,12 +231,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
+        "line": 80,
         "quote": "If a delegate goes quiet past its expected window, read its transcript under the session's `subagents/` dir"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 36,
+        "line": 80,
         "quote": "Salvage it, and respawn a fresh agent for only the remainder."
        }
       ]
@@ -255,12 +260,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "only if the resumed agent caps again does the master read its transcript under `subagents/`"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "it never raises the cap"
        }
       ]
@@ -321,7 +326,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "master ends its turn; the owner is notified",
     "model": "—",
-    "does": "The master sends a push notification and ends its turn: no relaunch, no retry. The run waits for the owner.",
+    "does": "The master sends a push notification and ends its turn; the run waits for the owner. At stage 5, an error that names a reset time gets one relaunch at that time; nothing else relaunches.",
     "inputs": [
      "respawns used up",
      "codex failure"
@@ -331,18 +336,23 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "gates": [
      {
-      "rule": "Park = push-notify and end the turn; no relaunch, no unpinned retry.",
+      "rule": "Park = push-notify and end the turn. At stage 5, one relaunch at the reset time when the error names one (a one-shot CronCreate), none otherwise; exit 66 gets no unpinned retry.",
       "evidence": "the push notification",
       "enforced_by": "prose",
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
-        "quote": "park: push-notify, end the turn, no relaunch"
+        "line": 72,
+        "quote": "in stage 5, park: push-notify and end the turn"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
+        "line": 72,
+        "quote": "with one relaunch at the reset time when the error names one (a one-shot `CronCreate`), and none otherwise"
+       },
+       {
+        "file": "skills/feature-workflow/SKILL.md",
+        "line": 72,
         "quote": "no unpinned retry"
        }
       ]
@@ -378,7 +388,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "Retirement is mechanical: `maxTurns` in the agent frontmatter, not a prose budget."
        },
        {
@@ -462,7 +472,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 52,
+        "line": 95,
         "quote": "A result marked partial at `maxTurns` is not an ingested output"
        },
        {
@@ -555,12 +565,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 62,
+        "line": 105,
         "quote": "Every such call — the codex run included — passes `timeout: 7200000`, the harness maximum"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 62,
+        "line": 105,
         "quote": "a background call without its own `timeout` is stopped at 30 min"
        }
       ]
@@ -729,41 +739,46 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
+        "line": 72,
         "quote": "Exit 124 → relaunch once with the same arguments, under a different `--out` name (e.g. a `-r2` suffix)."
        }
       ]
      },
      {
-      "rule": "A second 124: at stage 5 split the range; in a per-step round skip that round and note it in the cost checkpoint.",
+      "rule": "A second 124: at stage 5 split the range; in a per-step round skip that round and say so in the next status note.",
       "evidence": "none",
       "enforced_by": "prose",
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
+        "line": 72,
         "quote": "A second 124 → the range is too big: split it (above)"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
-        "quote": "when this fires inside a stage-4 per-step round, skip that round and note it in the cost checkpoint"
+        "line": 72,
+        "quote": "skip that round and say so in your next status note"
        }
       ]
      },
      {
-      "rule": "Non-zero after three attempts, or exit 66: park; no relaunch and no unpinned retry.",
+      "rule": "Non-zero after three attempts: a per-step round is skipped and no other reviewer stands in; stage 5 parks. Exit 66: park, no unpinned retry.",
       "evidence": "none",
       "enforced_by": "prose",
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
+        "line": 72,
         "quote": "Non-zero after the script's three attempts"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
+        "line": 72,
+        "quote": "inside a stage-4 per-step round, skip that round the same way, and no other reviewer stands in"
+       },
+       {
+        "file": "skills/feature-workflow/SKILL.md",
+        "line": 72,
         "quote": "Exit 66 (pin refused, under the free-space threshold) → park like the other failures"
        }
       ]
@@ -813,7 +828,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 26,
+        "line": 70,
         "quote": "A single commit too large to review on its own can't be split into sub-ranges — relaunch once unsplit"
        }
       ]
@@ -831,28 +846,34 @@ window.PV=window.PV||[];window.PV.push(
    "col": 6,
    "kind": "output",
    "title": "ROUND SKIPPED",
-   "sub": "per-step, 2nd 124",
-   "produces": "checkpoint note",
+   "sub": "step: 2nd 124 / fail",
+   "produces": "status note",
    "card": {
     "actor": "master",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "The per-step round is skipped and noted in the cost checkpoint; stage 5 still covers the skipped range.",
+    "does": "The per-step round is skipped and the next status note says so; no other reviewer stands in. Stage 5 still covers the skipped range.",
     "inputs": [
-     "second 124 in a per-step round"
+     "second 124 in a per-step round",
+     "codex failure in a per-step round"
     ],
     "artifacts": [
-     "cost-checkpoint note"
+     "status note"
     ],
     "gates": [
      {
-      "rule": "A skipped per-step round is noted in the cost checkpoint; stage 5 covers its range.",
-      "evidence": "the note in the cost checkpoint",
+      "rule": "A skipped per-step round is named in the next status note and no other reviewer stands in; stage 5 covers its range.",
+      "evidence": "the status note naming the skipped round",
       "enforced_by": "prose",
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 28,
+        "line": 72,
         "quote": "stage 5 still covers the skipped range"
+       },
+       {
+        "file": "skills/feature-workflow/SKILL.md",
+        "line": 72,
+        "quote": "and no other reviewer stands in"
        }
       ]
      }
@@ -889,12 +910,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 26,
+        "line": 70,
         "quote": "Split into contiguous commit sub-ranges so the slices **jointly cover the whole range with no gap**"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 26,
+        "line": 70,
         "quote": "overlapping slices are fine, a gap is a failed gate"
        }
       ]
@@ -906,7 +927,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 26,
+        "line": 70,
         "quote": "run one `codex-challenge.sh` call per slice, concurrent, **unpinned**"
        }
       ]
@@ -943,7 +964,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 26,
+      "line": 70,
       "quote": "each slice's range is recorded in its own header line"
      }
     ]
@@ -977,7 +998,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 26,
+        "line": 70,
         "quote": "hand ALL slice output files to a single `codex-triage` spawn"
        }
       ]
@@ -1134,7 +1155,7 @@ window.PV=window.PV||[];window.PV.push(
    "card": {
     "actor": "harness",
     "model": "—",
-    "does": "The master's own context size, posted in its cost checkpoints.",
+    "does": "The master's own context size. Near the ceiling (~500k; 600k absolute max) the master hands off.",
     "inputs": [],
     "artifacts": [
      "measured context size"
@@ -1158,45 +1179,36 @@ window.PV=window.PV||[];window.PV.push(
    }
   },
   {
-   "id": "ctxq",
-   "lane": "master",
-   "col": 11,
-   "kind": "decision",
-   "title": "CONTEXT?",
-   "sub": "400k · 500k · 600k",
-   "produces": "route",
+   "id": "compact",
+   "lane": "harness",
+   "col": 12,
+   "kind": "input",
+   "title": "COMPACTION",
+   "sub": "auto or manual",
+   "produces": "hook reminder",
    "card": {
-    "actor": "master",
-    "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "A normal arc finishes under ~400k with no compression. Crossing ~400k mid-arc is a defect signal. Near ~500k (600k absolute max) the master hands off.",
-    "inputs": [
-     "measured context size"
-    ],
+    "actor": "harness",
+    "model": "—",
+    "does": "The master's context is compacted. Compaction can drop an invoked skill's text entirely.",
+    "inputs": [],
     "artifacts": [
-     "route"
+     "SessionStart event, source compact"
     ],
     "gates": [
      {
-      "rule": "A normal feature arc finishes under ~400k with no compression machinery.",
-      "evidence": "the measured context size in the cost checkpoints",
-      "enforced_by": "prose",
+      "rule": "A SessionStart hook (matcher compact) prints one reminder line when the transcript shows feature-workflow was loaded, and nothing otherwise.",
+      "evidence": "the reminder line in the session context",
+      "enforced_by": "hook",
       "src": [
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 40,
-        "quote": "a normal feature arc finishes under ~400k with no compression machinery"
-       }
-      ]
-     },
-     {
-      "rule": "Near the ceiling (~500k; 600k absolute max) hand off; never silently push past it.",
-      "evidence": "the handoff brief file",
-      "enforced_by": "prose",
-      "src": [
+        "file": "hooks/skill-reload-after-compact.sh",
+        "line": 2,
+        "quote": "SessionStart hook (matcher \"compact\"): after a compaction, reminds the session"
+       },
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
-        "quote": "the master approaches the context ceiling mid-arc (~500k tokens; 600k absolute max) — never silently push past it"
+        "file": "settings.example.json",
+        "line": 41,
+        "quote": "\"matcher\": \"compact\","
        }
       ]
      }
@@ -1204,59 +1216,43 @@ window.PV=window.PV||[];window.PV.push(
     "options": [],
     "metrics": [],
     "gaps": [],
-    "src": []
+    "src": [
+     {
+      "file": "hooks/skill-reload-after-compact.sh",
+      "line": 4,
+      "quote": "compaction can drop an invoked skill's text entirely"
+     }
+    ]
    }
   },
   {
-   "id": "ckpt",
+   "id": "reload",
    "lane": "master",
    "col": 12,
    "kind": "stage",
-   "title": "COST CHECKPOINT",
-   "sub": "~400k: defect",
-   "produces": "flood named",
+   "title": "RELOAD SKILL",
+   "sub": "feature-workflow",
+   "produces": "skill text back",
    "card": {
     "actor": "master",
     "model": "opus · xhigh (settings model + modelSettings)",
-    "does": "Stops and posts the cost checkpoint naming what floods the context, so the flow gets fixed; no compression, no handoff. In the unattended tail a one-line checkpoint follows every step boundary.",
+    "does": "Invokes feature-workflow again before the next pipeline step, so the stage rules are back in context.",
     "inputs": [
-     "context past ~400k"
+     "hook reminder"
     ],
     "artifacts": [
-     "cost checkpoint"
+     "Skill call: feature-workflow"
     ],
     "gates": [
      {
-      "rule": "Crossing ~400k mid-arc: stop, post the cost checkpoint, name what floods the context.",
-      "evidence": "the posted checkpoint naming the flood",
+      "rule": "After a compaction, invoke feature-workflow again before the next step.",
+      "evidence": "a feature-workflow Skill call after the compaction, before the next step",
       "enforced_by": "prose",
       "src": [
        {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 40,
-        "quote": "Crossing ~400k mid-arc is a *defect signal*, not a reason to compress or hand off"
-       },
-       {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 40,
-        "quote": "stop, post the cost checkpoint, and name what's flooding the context so the flow gets fixed"
-       }
-      ]
-     },
-     {
-      "rule": "Unattended tail: a one-line cost checkpoint at every step boundary (elapsed time, and the context size read from the last assistant usage in the session transcript, never estimated).",
-      "evidence": "the checkpoint lines, each with a measured context size",
-      "enforced_by": "prose",
-      "src": [
-       {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 40,
-        "quote": "post a one-line cost checkpoint at every step boundary"
-       },
-       {
-        "file": "skills/feature-workflow/SKILL.md",
-        "line": 40,
-        "quote": "input + cache-read + cache-creation tokens, never estimated"
+        "file": "global/CLAUDE.md",
+        "line": 55,
+        "quote": "After a compaction, invoke it again before the next step — compaction can drop the skill's text."
        }
       ]
      }
@@ -1293,12 +1289,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "the master writes the next arc's brief to `<scratchpad>/handoff-<feature>.md`"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "the owner's standing instructions verbatim"
        }
       ]
@@ -1310,12 +1306,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "Attended: the turn ends with the brief's path and the owner's steps"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "never an offer to start the next arc in this session"
        }
       ]
@@ -1327,13 +1323,25 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "Unattended, under delegated approval: launch it"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "then end this session"
+       }
+      ]
+     },
+     {
+      "rule": "Near the ceiling (~500k; 600k absolute max) hand off; never silently push past it.",
+      "evidence": "the handoff brief file",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "skills/feature-workflow/SKILL.md",
+        "line": 83,
+        "quote": "the master approaches the context ceiling mid-arc (~500k tokens; 600k absolute max) — never silently push past it"
        }
       ]
      }
@@ -1344,7 +1352,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 39,
+      "line": 83,
       "quote": "A new arc gets a new master."
      }
     ]
@@ -1402,7 +1410,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "an `AskUserQuestion` inside it parks the session under \"Needs input\" until someone attaches"
        }
       ]
@@ -1414,7 +1422,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 39,
+        "line": 83,
         "quote": "so the brief must carry the delegation that makes gates self-resolving"
        }
       ]
@@ -1438,7 +1446,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 39,
+      "line": 83,
       "quote": "`cd <repo> && claude --bg --name \"<this session's name>\" --permission-mode auto"
      }
     ]
@@ -1469,7 +1477,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 39,
+      "line": 83,
       "quote": "the sibling-repo sessions linked to the feature (the new master messages each on start with its own address)"
      }
     ]
@@ -1611,7 +1619,7 @@ window.PV=window.PV||[];window.PV.push(
      0.5
     ]
    ],
-   "label": "66 / fail ×3"
+   "label": "66 · stage 5 fail ×3"
   },
   {
    "id": "r_exitq_split",
@@ -1641,7 +1649,7 @@ window.PV=window.PV||[];window.PV.push(
      1.5
     ]
    ],
-   "label": "124 again · per-step"
+   "label": "step: 2nd 124 · fail ×3"
   },
   {
    "id": "r_exitq_relaunch",
@@ -1669,7 +1677,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "skills/feature-workflow/SKILL.md",
-     "line": 28,
+     "line": 72,
      "quote": "Exit 124 → relaunch once with the same arguments"
     }
    ]
@@ -1712,7 +1720,33 @@ window.PV=window.PV||[];window.PV.push(
      -0.5
     ]
    ],
-   "label": "exit 0 <60s, no findings"
+   "label": "stage 5: <60 s, empty"
+  },
+  {
+   "id": "r_triage_skip",
+   "from": "triage",
+   "to": "skip",
+   "exit": "l",
+   "enter": "b",
+   "kind": "flow",
+   "label": "per-step: <60 s, empty"
+  },
+  {
+   "id": "r_park_launch",
+   "from": "park",
+   "to": "launch",
+   "exit": "b",
+   "enter": "t",
+   "kind": "back",
+   "label": "reset time named",
+   "bound": "one relaunch",
+   "src": [
+    {
+     "file": "skills/feature-workflow/SKILL.md",
+     "line": 72,
+     "quote": "with one relaunch at the reset time when the error names one"
+    }
+   ]
   },
   {
    "id": "r_plansz_arcq",
@@ -1751,35 +1785,27 @@ window.PV=window.PV||[];window.PV.push(
    "label": "arc 2 next"
   },
   {
-   "id": "r_ctx_ctxq",
+   "id": "r_ctx_handoff",
    "from": "ctx",
-   "to": "ctxq",
-   "exit": "b",
-   "enter": "t",
-   "kind": "flow"
-  },
-  {
-   "id": "r_ctxq_ckpt",
-   "from": "ctxq",
-   "to": "ckpt",
-   "exit": "r",
-   "enter": "l",
-   "kind": "flow"
-  },
-  {
-   "id": "r_ctxq_handoff",
-   "from": "ctxq",
    "to": "handoff",
    "exit": "b",
    "enter": "b",
    "kind": "flow",
    "via": [
     [
-     11.5,
+     11,
      2.5
     ]
    ],
    "label": "~500k: hand off"
+  },
+  {
+   "id": "r_compact_reload",
+   "from": "compact",
+   "to": "reload",
+   "exit": "b",
+   "enter": "t",
+   "kind": "flow"
   },
   {
    "id": "r_handoff_paste",
@@ -1832,7 +1858,7 @@ window.PV=window.PV||[];window.PV.push(
      "t": 0.0,
      "d": 1.0,
      "packet": "cron :22",
-     "log": "cron fires while the master waits idle: list subagents/*.jsonl by mtime"
+     "log": "the watchdog fires with agents live: list subagents/*.jsonl by mtime"
     },
     {
      "edge": "r_quiet_trans",
@@ -2038,13 +2064,13 @@ window.PV=window.PV||[];window.PV.push(
      "t": 5.8,
      "d": 1.0,
      "packet": "skip",
-     "log": "skip the round, note it in the cost checkpoint; stage 5 covers the range"
+     "log": "skip the round, say so in the next status note; stage 5 covers the range"
     }
    ]
   },
   {
    "id": "0s",
-   "title": "exit 0 in under 60 s: triage reports it, park",
+   "title": "stage 5, exit 0 in under 60 s: park, relaunch at the reset",
    "steps": [
     {
      "edge": "r_launch_run",
@@ -2072,13 +2098,20 @@ window.PV=window.PV||[];window.PV.push(
      "t": 3.7,
      "d": 1.5,
      "packet": "verbatim",
-     "log": "no findings text: a usage-limit error, quoted verbatim -> park"
+     "log": "no findings text: a usage-limit error, quoted verbatim -> park, push-notify"
+    },
+    {
+     "edge": "r_park_launch",
+     "t": 5.4,
+     "d": 1.4,
+     "packet": "reset time",
+     "log": "the error names a reset time: a one-shot CronCreate relaunches then, once"
     }
    ]
   },
   {
    "id": "66",
-   "title": "exit 66 or failure after 3 attempts: park",
+   "title": "exit 66: park, no unpinned retry",
    "steps": [
     {
      "edge": "r_launch_run",
@@ -2104,22 +2137,36 @@ window.PV=window.PV||[];window.PV.push(
    ]
   },
   {
-   "id": "400k",
-   "title": "context past ~400k: stop and post the cost checkpoint",
+   "id": "limit",
+   "title": "per-step round, usage limit: skip the round",
    "steps": [
     {
-     "edge": "r_ctx_ctxq",
+     "edge": "r_launch_run",
      "t": 0.0,
-     "d": 1.0,
-     "packet": "~410k",
-     "log": "the master's context passes ~400k mid-arc"
+     "d": 0.9,
+     "packet": "--pin",
+     "log": "per-step round 2 with --pin"
     },
     {
-     "edge": "r_ctxq_ckpt",
-     "t": 1.2,
+     "edge": "r_run_exitq",
+     "t": 1.1,
      "d": 1.0,
-     "packet": "defect",
-     "log": "a defect signal, not a reason to compress: stop, post the checkpoint, name the flood"
+     "packet": "exit 0, 38 s",
+     "log": "exit 0 after 38 s: too fast for a real review"
+    },
+    {
+     "edge": "r_exitq_triage",
+     "t": 2.3,
+     "d": 1.2,
+     "packet": "step2.md",
+     "log": "codex-triage reads the file and quotes the usage-limit error"
+    },
+    {
+     "edge": "r_triage_skip",
+     "t": 3.7,
+     "d": 1.3,
+     "packet": "skip",
+     "log": "per-step: skip the round, no other reviewer stands in; stage 5 covers the range"
     }
    ]
   },
@@ -2128,32 +2175,38 @@ window.PV=window.PV||[];window.PV.push(
    "title": "context near ~500k: handoff, the owner starts a new session",
    "steps": [
     {
-     "edge": "r_ctx_ctxq",
+     "edge": "r_ctx_handoff",
      "t": 0.0,
-     "d": 1.0,
+     "d": 1.4,
      "packet": "~500k",
-     "log": "the master nears ~500k (600k is the absolute max)"
-    },
-    {
-     "edge": "r_ctxq_handoff",
-     "t": 1.2,
-     "d": 1.2,
-     "packet": "hand off",
-     "log": "never push past it: write the handoff brief"
+     "log": "the master nears ~500k (600k is the absolute max): never push past it, write the handoff brief"
     },
     {
      "edge": "r_handoff_paste",
-     "t": 2.6,
+     "t": 1.6,
      "d": 1.0,
      "packet": "brief path",
      "log": "attended: the turn ends with the brief path and the owner's steps"
     },
     {
      "edge": "r_paste_newm",
-     "t": 3.8,
+     "t": 2.8,
      "d": 1.2,
      "packet": "brief",
      "log": "the owner pastes the brief into a new session; the new master takes over"
+    }
+   ]
+  },
+  {
+   "id": "compact",
+   "title": "compaction: the hook reminds, the master reloads the skill",
+   "steps": [
+    {
+     "edge": "r_compact_reload",
+     "t": 0.0,
+     "d": 1.2,
+     "packet": "reminder",
+     "log": "after a compaction the hook finds the feature-workflow load in the transcript: invoke it again"
     }
    ]
   },

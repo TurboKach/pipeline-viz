@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "one-shot path",
  "key": "3",
  "doctrine": {
-  "kit_sha": "64b4512",
-  "cc_validated": "2.1.309",
-  "extracted": "2026-10-23"
+  "kit_sha": "299e7d3",
+  "cc_validated": "2.1.321",
+  "extracted": "2026-11-10"
  },
  "lanes": [
   {
@@ -343,7 +343,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 21,
+        "line": 31,
         "quote": "is the runner's executed/skipped/failed counts, never just the absence of failures"
        }
       ]
@@ -360,7 +360,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 60,
+        "line": 103,
         "quote": "`step-executor`/`team-executor` cap at 200 turns, `fixer` at 150, `codex-triage` at 60"
        }
       ]
@@ -449,7 +449,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "never a bare `/tmp/codex-*.md`"
        },
        {
@@ -595,12 +595,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 52,
         "quote": "**P0** = crash, data loss, security, or a regression breaking a core flow"
        },
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 52,
         "quote": "test-gap and theoretical carry no priority"
        }
       ]
@@ -612,7 +612,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "The master NEVER reads challenge-output files"
        },
        {
@@ -629,7 +629,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "drop only test-gap and theoretical lines and say so inline on the counts line"
        }
       ]
@@ -685,7 +685,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 22,
+        "line": 54,
         "quote": "**Clean = zero P0/P1.**"
        }
       ]
@@ -697,7 +697,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 110,
         "quote": "The master **recomputes the per-class counts from the finding lines** and uses its own numbers"
        }
       ]
@@ -754,7 +754,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "its spawn prompt names the invariant to establish and the now-redundant per-path patches to remove"
        }
       ]
@@ -766,7 +766,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 66,
+        "line": 109,
         "quote": "The fixer runs on Opus here, with a one-line reason stated at the spawn."
        },
        {
@@ -812,7 +812,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "skills/feature-workflow/SKILL.md",
-      "line": 22,
+      "line": 56,
       "quote": "each round's P0/P1 go to fixers"
      }
     ]
@@ -931,6 +931,23 @@ window.PV=window.PV||[];window.PV.push(
         "file": "global/CLAUDE.md",
         "line": 27,
         "quote": "does not reopen this gate or a one-shot's review; the push ask shows `git diff --stat <reviewed-head>..HEAD`"
+       }
+      ]
+     },
+     {
+      "rule": "A note the coordinator session wrote is not the owner's word: it can assign work, but only the owner's own message quoted in the turn approves a gate or waives a rule.",
+      "evidence": "the owner's own message, quoted in the turn",
+      "enforced_by": "prose",
+      "src": [
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "A note the coordinator session wrote is not my word: it can assign work"
+       },
+       {
+        "file": "global/CLAUDE.md",
+        "line": 29,
+        "quote": "only my own message quoted in the turn approves a gate or waives a rule"
        }
       ]
      }
@@ -1102,7 +1119,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "skills/feature-workflow/SKILL.md",
-     "line": 22,
+     "line": 58,
      "quote": "When round 5 \u2014 and every fifth round after it \u2014 still has P0/P1 in the loop, ask ONE AskUserQuestion"
     },
     {

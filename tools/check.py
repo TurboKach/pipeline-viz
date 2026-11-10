@@ -5,6 +5,8 @@
   check.py shoot --view feature --t 7 [--card appr] [--overlay gaps,candidates]
   check.py shoot --all                      every built view x {plain,gaps,candidates,metrics} + one card
   check.py lint                             measure overlaps and text size in the rendered page (exit 0 = clean)
+  check.py export [--check]                 write FLOW.md (mermaid per view + decision tables); --check exits 1 when it is stale
+  check.py drift [--hook]                   count kit doctrine commits since doctrine.kit_sha; exit 1 when any (--hook: silent at 0, always exit 0)
 
 Spec files are one fixed JS wrapper around one pure JSON object (see README).
 No regex field extraction: the wrapper is stripped by exact prefix/suffix and
@@ -57,6 +59,7 @@ LIM_TITLE, LIM_SUB, LIM_CARD = 18, 22, 280      # from the plan
 LIM_PRODUCES, LIM_LANE_LABEL, LIM_LANE_SUB = 20, 12, 16    # step-1 decisions
 LIM_EDGE_LABEL, LIM_PACKET, LIM_LOG, LIM_SC_TITLE, LIM_VIEW_TITLE = 24, 20, 110, 60, 40
 MAX_CYCLE = 60.0
+LIM_PHASE_LABEL, MAX_PHASES = 14, 8
 QUOTE_MAX, QUOTE_WINDOW = 120, 5
 
 NODE_KINDS = ('input', 'stage', 'sub', 'codex', 'human', 'decision', 'output')
@@ -64,6 +67,10 @@ ENFORCED = ('hook', 'script', 'frontmatter', 'harness', 'analyze-arcs', 'prose')
 GAP_KINDS = ('tech-debt', 'derived')
 EDGE_KINDS = ('flow', 'back', 'alt')
 SIDES = ('l', 'r', 't', 'b')
+
+# TWIN: viz.js KIT_URL. Public kit repo: FLOW.md's source links point here, at the commit the spec is stamped with.
+KIT_URL = 'https://github.com/TurboKach/claude-code-setup'
+FLOW_PATH = os.path.join(ROOT, 'FLOW.md')
 
 # The kit repo every citation is relative to. Default: the sibling checkout; main() overrides it with --kit.
 KIT = os.path.join(os.path.dirname(ROOT), 'claude-code-setup')
@@ -382,7 +389,7 @@ class Checker:
 def validate_view(rep, file, stem, v):
     c = Checker(rep, file, stem)
     if not c.keys(v, '', '', ('id', 'title', 'key', 'doctrine', 'lanes', 'cols', 'nodes', 'edges', 'scenarios'),
-                  ('draft', 'unplaced')):
+                  ('draft', 'unplaced', 'phases')):
         return
     rep.counts['views'] += 1
     draft = v.get('draft', False)
@@ -439,6 +446,31 @@ def validate_view(rep, file, stem, v):
     elif cols > MAX_COLS:
         c.e('', 'cols', '%d cols, limit %d' % (cols, MAX_COLS))
         cols = MAX_COLS
+
+    # phases: the SDLC band over the columns, sorted by from, inclusive, no overlap
+    phases = v.get('phases')
+    if 'phases' in v:
+        if not isinstance(phases, list):
+            c.e('', 'phases', 'must be a list')
+        else:
+            if len(phases) > MAX_PHASES:
+                c.e('', 'phases', '%d phases, limit %d' % (len(phases), MAX_PHASES))
+            last = -1
+            for i, ph in enumerate(phases):
+                ref = 'phase:%d' % i
+                if not c.keys(ph, ref, '', ('label', 'from', 'to')):
+                    continue
+                c.text(ph.get('label'), ref, 'label', LIM_PHASE_LABEL)
+                ends = [ph.get(k) for k in ('from', 'to')]
+                if not all(isinstance(x, int) and not isinstance(x, bool) and 0 <= x <= cols - 1 for x in ends):
+                    c.e(ref, 'from', 'from and to must be integers inside 0..%d' % (cols - 1))
+                elif ends[0] > ends[1]:
+                    c.e(ref, 'from', 'from %d is after to %d' % tuple(ends))
+                elif ends[0] <= last:
+                    c.e(ref, 'from', 'must be after the previous phase (ends at %d): sorted, no overlap' % last)
+                    last = max(last, ends[1])
+                else:
+                    last = ends[1]
 
     # nodes
     nodes = {}
@@ -1125,6 +1157,235 @@ def cmd_lint(args):
     return 1 if bad or not ran else 0
 
 
+# ---- FLOW.md export ----------------------------------------------------------
+# FLOW.md is a pure function of spec/*.js: no clock, no dict or set order, views in VIEW_ORDER, nodes and edges
+# in spec order. Text reaches the file through esc_mermaid (inside a quoted mermaid label) or esc_cell (a markdown
+# table cell) and nowhere else.
+_MERMAID_ESC = {'#': '#35;', '"': '#quot;', '<': '#lt;', '>': '#gt;', '&': '#amp;', '|': '#124;',
+                '[': '#91;', ']': '#93;', '`': '#96;', '\n': ' ', '\r': ' '}
+_CELL_ESC = {'\\': '\\\\', '|': '\\|', '`': '\\`', '*': '\\*', '_': '\\_', '[': '\\[', ']': '\\]',
+             '<': '&lt;', '>': '&gt;', '&': '&amp;', '\n': ' ', '\r': ' '}
+
+
+def esc_mermaid(text):
+    """`text` made safe inside a double-quoted mermaid label (one pass, so no escape is escaped twice)."""
+    return ''.join(_MERMAID_ESC.get(ch, ch) for ch in str(text))
+
+
+def esc_cell(text):
+    """`text` made safe inside a markdown table cell."""
+    return ''.join(_CELL_ESC.get(ch, ch) for ch in str(text))
+
+
+def src_url(sha, src):
+    path = '/'.join(urllib.parse.quote(part, safe='') for part in src['file'].split('/'))
+    return '%s/blob/%s/%s?plain=1#L%s' % (KIT_URL, sha, path, src['line'])   # TWIN: viz.js srcLink
+
+
+def node_phase(v, node):
+    for ph in v.get('phases') or []:
+        if ph['from'] <= node['col'] <= ph['to']:
+            return ph['label']
+    return '—'
+
+
+def mermaid_edge_label(e):
+    parts = [e['label']] if e.get('label') else []
+    if e.get('guard'):
+        parts.append('[%s]' % e['guard'])
+    if e['kind'] == 'back':
+        parts.append('bound: %s' % e['bound'])
+    return ' · '.join(parts)
+
+
+# One colour per lane, by the lane's position in its view (a view has at most five lanes; more would repeat):
+# (colour name for the legend, fill, stroke).
+LANE_COLOURS = [('blue', '#cfe8ff', '#2b6cb0'), ('green', '#d5f5e3', '#1e8449'), ('amber', '#ffe8b3', '#b7791f'),
+                ('violet', '#e8d5ff', '#6b46c1'), ('rose', '#ffd6dc', '#c53030')]
+
+
+def lane_colour(li):
+    return LANE_COLOURS[li % len(LANE_COLOURS)]
+
+
+def view_legend(v):
+    return 'Lanes: ' + ' · '.join('%s (%s)' % (esc_cell(lane['label'].lower()), lane_colour(li)[0])
+                                  for li, lane in enumerate(v['lanes']))
+
+
+def view_mermaid(v):
+    nid = {n['id']: 'n%d' % i for i, n in enumerate(v['nodes'])}
+    lane_idx = {lane['id']: li for li, lane in enumerate(v['lanes'])}
+    lines = ['flowchart LR']
+    for li, lane in enumerate(v['lanes']):
+        _name, fill, stroke = lane_colour(li)
+        lines.append('  classDef lane%d fill:%s,stroke:%s,color:#111' % (li, fill, stroke))
+    for n in v['nodes']:
+        lane = v['lanes'][lane_idx[n['lane']]]
+        text = '%s: %s<br/>%s' % (esc_mermaid(lane['label'].lower()), esc_mermaid(n['title']), esc_mermaid(n['sub']))
+        shape = {'decision': '{"%s"}', 'human': '(["%s"])'}.get(n['kind'], '["%s"]')
+        lines.append('  %s%s:::lane%d' % (nid[n['id']], shape % text, lane_idx[n['lane']]))
+    for e in v['edges']:
+        label = mermaid_edge_label(e)
+        back = e['kind'] == 'back'
+        if label:
+            arrow = ('-. "%s" .->' if back else '-- "%s" -->') % esc_mermaid(label)
+        else:
+            arrow = '-.->' if back else '-->'
+        lines.append('  %s %s %s' % (nid[e['from']], arrow, nid[e['to']]))
+    return '\n'.join(lines)
+
+
+def cell_list(items):
+    return '<br>'.join(('%d. %s' % (i + 1, t) if len(items) > 1 else t) for i, t in enumerate(items))
+
+
+def decision_row(v, n):
+    card, sha = n['card'], v['doctrine']['kit_sha']
+    options = [str(o) for o in card['options']]
+    if not options:   # a decision of the master has no options list: its choices are the outgoing edges
+        title = {m['id']: m['title'] for m in v['nodes']}   # an unlabelled edge is named by its target's title, never its id
+        options = [mermaid_edge_label(e) or title[e['to']] for e in v['edges'] if e['from'] == n['id']]
+    links, seen = [], set()
+    for s in card['src'] + [s for g in card['gates'] for s in g['src']]:
+        if (s['file'], s['line']) not in seen:
+            seen.add((s['file'], s['line']))
+            links.append('[%s](%s)' % (esc_cell('%s:%s' % (s['file'], s['line'])), src_url(sha, s)))
+    cells = [
+        '%s — %s' % (esc_cell(n['title']), esc_cell(n['sub'])), esc_cell(v['title']), esc_cell(node_phase(v, n)),
+        esc_cell(card['actor']), esc_cell(', '.join(card['inputs'])),
+        cell_list([esc_cell(o) for o in options]),
+        cell_list([esc_cell(g['enforced_by']) for g in card['gates']]),
+        cell_list([esc_cell(g['evidence']) for g in card['gates']]),
+        '<br>'.join(links),
+    ]
+    return '| ' + ' | '.join(c or '—' for c in cells) + ' |'
+
+
+def build_flow(views):
+    out = ['<!-- generated by tools/check.py export from spec/*.js — do not edit; regenerate with: python3 -B tools/check.py export -->',
+           '', '# Pipeline flow', '',
+           'Generated from the map specs: one flowchart and one decision table per view. Source links open the cited kit line at the commit the map is stamped with.']
+    for v in views:
+        out += ['', '## %s' % esc_cell(v['title']), '', '`%s` · kit `%s`' % (v['id'], v['doctrine']['kit_sha']), '',
+                view_legend(v), '', '```mermaid', view_mermaid(v), '```', '', '### Decisions — %s' % esc_cell(v['title']), '']
+        rows = [decision_row(v, n) for n in v['nodes'] if n['kind'] in ('decision', 'human')]
+        if rows:
+            out += ['| Decision | View | SDLC phase | Who decides | Inputs | Options | Enforced by | Evidence | Source |',
+                    '|---|---|---|---|---|---|---|---|---|'] + rows
+        else:
+            out.append('No decision or human nodes.')
+    return '\n'.join(out) + '\n'
+
+
+def cmd_export(args):
+    views = []
+    for vid, _key, _name in VIEW_ORDER:
+        path = os.path.join(SPEC_DIR, vid + '.js')
+        if not os.path.exists(path):
+            continue
+        obj, why = load_view(path)
+        if why:
+            print('export: %s: %s' % (path, why))
+            return 1
+        views.append(obj)
+    text = build_flow(views).encode('utf-8')
+    if args.check:
+        try:
+            with open(FLOW_PATH, 'rb') as f:
+                same = f.read() == text
+        except OSError:
+            same = False
+        if not same:
+            print('FLOW.md is stale: run python3 -B tools/check.py export')
+            return 1
+        return 0
+    with open(FLOW_PATH, 'wb') as f:
+        f.write(text)
+    print('wrote %s (%d views)' % (FLOW_PATH, len(views)))
+    return 0
+
+
+# ---- drift -------------------------------------------------------------------
+# How far the kit has moved since the map was stamped. Reads the kit with `git rev-list` and `git log` only; writes nothing.
+DOCTRINE_PATHS = ['global', 'skills', 'agents', 'hooks', 'settings.example.json', 'install.sh']
+MAX_DRIFT_SUBJECTS = 20
+
+
+def cited_files(obj, out):
+    """Adds to the set `out` every `file` of a citation ({file, line, quote}) anywhere in a parsed spec."""
+    if isinstance(obj, dict):
+        if 'quote' in obj and isinstance(obj.get('file'), str) and path_error(obj['file']) is None:
+            out.add(obj['file'])
+        for x in obj.values():
+            cited_files(x, out)
+    elif isinstance(obj, list):
+        for x in obj:
+            cited_files(x, out)
+
+
+def drift_report():
+    """(lines, count, None) or (None, None, problem). Lines: the summary, then at most MAX_DRIFT_SUBJECTS subjects."""
+    stamps, cited = {}, set()
+    for vid in VIEW_IDS:
+        obj, why = load_view(os.path.join(SPEC_DIR, vid + '.js'))
+        if why:
+            return None, None, 'spec/%s.js: %s' % (vid, why)
+        doc = obj.get('doctrine')
+        stamps[vid] = doc.get('kit_sha') if isinstance(doc, dict) else None
+        cited_files(obj, cited)
+    if len(set(map(repr, stamps.values()))) > 1:
+        return None, None, 'specs disagree on doctrine.kit_sha: ' + ', '.join('%s %s' % (v, stamps[v]) for v in VIEW_IDS)
+    sha = stamps[VIEW_IDS[0]]
+    if not valid_sha(sha):
+        return None, None, 'doctrine.kit_sha %r is not 7 to 40 lowercase hex characters' % (sha,)
+    why = kit_problem(sha)
+    if why:
+        return None, None, why
+    kit = os.path.abspath(KIT)
+    paths = DOCTRINE_PATHS + sorted(cited)
+    base = ['--literal-pathspecs']
+    rc, head = _git(kit, *base, 'rev-parse', '--short', 'HEAD')
+    if rc != 0:
+        return None, None, 'cannot read the kit HEAD: %s' % (head if rc is None else 'git rev-parse failed')
+    head_sha = head.decode('utf-8', errors='replace').strip()
+    rc, out = _git(kit, *base, 'merge-base', '--is-ancestor', sha, 'HEAD')
+    if rc is None:
+        return None, None, 'cannot check the stamp against the kit HEAD: %s' % out
+    if rc == 1:
+        return None, None, 'doctrine.kit_sha %s is not an ancestor of the kit HEAD %s (kit checked out at an older commit or on another branch)' % (sha, head_sha)
+    if rc != 0:
+        return None, None, 'cannot check the stamp against the kit HEAD: git merge-base failed'
+    rc, n = _git(kit, *base, 'rev-list', '--count', sha + '..HEAD', '--', *paths)
+    if rc != 0 or not n.strip().isdigit():
+        return None, None, 'cannot count kit commits: %s' % (n if rc is None else 'git rev-list failed')
+    count = int(n)
+    lines = ['map stamped %s · kit %s · %d doctrine commits since' % (sha, head_sha, count)]
+    if count:
+        rc, log = _git(kit, *base, 'log', '--format=%h %s', '-n', str(MAX_DRIFT_SUBJECTS), sha + '..HEAD', '--', *paths)
+        if rc != 0:
+            return None, None, 'cannot list kit commits: %s' % (log if rc is None else 'git log failed')
+        lines += ['  ' + ln for ln in log.decode('utf-8', errors='replace').splitlines()]
+        if count > MAX_DRIFT_SUBJECTS:
+            lines.append('  … and %d more' % (count - MAX_DRIFT_SUBJECTS))
+    return lines, count, None
+
+
+def cmd_drift(args):
+    try:
+        lines, count, problem = drift_report()
+    except Exception as e:   # noqa: BLE001 - a SessionStart hook must never break session start
+        if not args.hook:
+            raise
+        lines, count, problem = None, None, '%s: %s' % (type(e).__name__, e)
+    if problem:
+        print('drift: ' + problem)
+        return 0 if args.hook else 1
+    if count or not args.hook:
+        print('\n'.join(lines))
+    return 0 if args.hook else (1 if count else 0)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--kit', help='kit repo every citation is relative to (default: ../claude-code-setup next to this repo)')
@@ -1144,11 +1405,15 @@ def main():
     li = sub.add_parser('lint')
     li.add_argument('--widths', help='comma list of window widths (default: the view\'s shoot width and 1440)')
     li.add_argument('--budget', type=int, default=4000, help='--virtual-time-budget in ms')
+    ex = sub.add_parser('export')
+    ex.add_argument('--check', action='store_true', help='write nothing; exit 1 when FLOW.md differs from the generated text')
+    dr = sub.add_parser('drift')
+    dr.add_argument('--hook', action='store_true', help='print only when the kit has moved; always exit 0, also on a problem')
     args = ap.parse_args()
     if args.kit:
         global KIT
         KIT = os.path.abspath(os.path.expanduser(args.kit))
-    sys.exit({'validate': cmd_validate, 'shoot': cmd_shoot, 'lint': cmd_lint}[args.cmd](args))
+    sys.exit({'validate': cmd_validate, 'shoot': cmd_shoot, 'lint': cmd_lint, 'export': cmd_export, 'drift': cmd_drift}[args.cmd](args))
 
 
 if __name__ == '__main__':
