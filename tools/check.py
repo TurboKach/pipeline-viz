@@ -267,6 +267,8 @@ def kit_lines(sha, f):
                 err = 'cited file does not exist at kit_sha %s: %s' % (sha, f)
             else:
                 lines = out.decode('utf-8', errors='replace').split('\n')
+                if lines[-1] == '':   # GitHub numbers lines as an editor does: a final newline ends the last line, starts none
+                    lines.pop()       # (str.splitlines would also break on \f, \v, U+2028: not line ends there)
         _file_cache[key] = (lines, err)
     return _file_cache[key]
 

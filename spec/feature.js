@@ -1510,7 +1510,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 67,
+        "line": 66,
         "quote": "The master NEVER reads challenge-output files"
        }
       ]
@@ -1522,7 +1522,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 67,
+        "line": 66,
         "quote": "drop only test-gap and theoretical lines and say so inline on the counts line"
        }
       ]
@@ -1607,7 +1607,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 67,
+        "line": 66,
         "quote": "The master **recomputes the per-class counts from the finding lines** and uses its own numbers"
        }
       ]

@@ -3,6 +3,8 @@
 import contextlib
 import copy
 import io
+import json
+import pathlib
 import os
 import stat
 import struct
@@ -197,6 +199,14 @@ class KitRepo(unittest.TestCase):
         self.git('commit', '-q', '-m', msg)
         return self.git('rev-parse', 'HEAD')[:10]
 
+    def commit_raw(self, rel, text, msg):
+        path = os.path.join(self.repo, rel)
+        with open(path, 'w', newline='') as f:
+            f.write(text)
+        self.git('add', rel)
+        self.git('commit', '-q', '-m', msg)
+        return self.git('rev-parse', 'HEAD')[:10]
+
     def cite(self, f='docs/a.md', line=32, quote='beta quote here', **kw):
         return check.check_citation({'file': f, 'line': line, 'quote': quote}, kw.get('sha', self.sha1))
 
@@ -207,6 +217,20 @@ class CitationPaths(KitRepo):   # finding 6: a citation is a kit-relative path r
         self.assertIsNone(self.cite(line=30))   # inside the +-5 window
         self.assertTrue(self.cite(line=1).startswith('STALE'))
         self.assertIn('outside the file', self.cite(line=999))
+
+    def test_lines_are_counted_as_github_numbers_them(self):
+        # a final newline ends the last line and starts no new one; a partial last line still counts; an empty file has none
+        cases = [('final newline', 'one\ntwo quote\n', 2), ('no final newline', 'one\ntwo quote', 2),
+                 ('crlf', 'one\r\ntwo quote\r\n', 2), ('form feed is no line end', 'one\x0c\ntwo quote\n', 2),
+                 ('one blank line', '\n', 1), ('empty', '', 0)]
+        for name, text, count in cases:
+            with self.subTest(case=name):
+                sha = self.commit_raw('docs/a.md', text, name)
+                self.assertEqual(len(check.kit_lines(sha, 'docs/a.md')[0]), count)
+                msg = self.cite(line=count + 1, quote='quote', sha=sha)
+                self.assertIn('outside the file (%d line' % count, msg)
+                if count > 1:
+                    self.assertIsNone(self.cite(line=count, quote='quote', sha=sha))
 
     def test_bad_paths_are_errors_and_never_reach_git(self):
         bad = ['/etc/passwd', '/', '~/Dev/claude-code-setup/docs/a.md', '~nonexistent_user_zz/x', '~', '../x', 'docs/../../x',
@@ -364,6 +388,15 @@ class RepointAtTheStamp(KitRepo):   # repoint.py moves a quote to its line at th
         self.assertIsNone(check.check_citation(view['nodes'][0]['card']['src'][0], sha2))
         old = self.spec(self.sha1, 32)   # at the old stamp nothing is stale, nothing moves
         self.assertEqual(repoint.repoint_view(old, 'spec/feature.js')[1:], (0, [], []))
+
+    def test_a_phantom_line_after_the_final_newline_is_repointed(self):
+        sha2 = self.commit_raw('docs/a.md', 'one\nbeta quote here\n', 'two lines')
+        view = self.spec(sha2, 3)   # line 3 is what split('\n') invents after the final newline
+        src = view['nodes'][0]['card']['src'][0]
+        self.assertIn('outside the file', check.check_citation(src, sha2))
+        self.assertEqual(repoint.repoint_view(view, 'spec/feature.js')[:2], (1, 1))
+        self.assertEqual(src['line'], 2)
+        self.assertIsNone(check.check_citation(src, sha2))
 
     def test_a_line_outside_the_file_is_repointed_like_a_stale_one(self):
         sha2 = self.moved()   # the quote sits on line 44 of a 49-line file
@@ -713,6 +746,65 @@ class FrozenParamsInRealChrome(unittest.TestCase):
         a = check.html_attrs(self.dom(scenario='nonexistent', card='nonexistent', overlay='gapz'))   # no t: live page
         self.assertIsNone(a.get('data-pv-error'))
         self.assertEqual(a.get('data-pv-view'), 'feature')
+
+
+@unittest.skipUnless(os.environ.get('PV_REAL_CHROME') == '1',
+                     'launches real Chrome; run it as: PV_REAL_CHROME=1 python3 -B tools/test_check.py CitationLinkForm')
+class CitationLinkForm(unittest.TestCase):
+    """A citation link opens GitHub's code view at the stamped commit with the cited line addressed: ?plain=1 before
+    #L<line> (without it a .md file opens rendered and the anchor does nothing), for every file type."""
+    BASE = 'https://github.com/TurboKach/claude-code-setup/blob/'
+
+    @staticmethod
+    def blob_links(dom):
+        import html.parser
+
+        class P(html.parser.HTMLParser):
+            hrefs = []
+
+            def handle_starttag(self, tag, attrs):
+                h = dict(attrs).get('href')
+                if tag == 'a' and h and '/blob/' in h:
+                    self.hrefs.append(h)
+        p = P()
+        p.hrefs = []
+        p.feed(dom)
+        return p.hrefs
+
+    def test_real_card_links_are_code_view_links(self):
+        dom = check.chrome_dom(check.page_url([('view', 'feature'), ('t', '7.8'), ('card', 'clean')]), '1400,900', 4000)
+        links = self.blob_links(dom)
+        self.assertEqual(len(links), 8, links)
+        for h in links:
+            self.assertRegex(h, r'^%s64b4512/[^?#]+\?plain=1#L\d+$' % self.BASE)
+
+    def test_every_file_type_gets_the_same_form(self):
+        exts = ('skills/x/SKILL.md', 'skills/x/scripts/a.py', 'hooks/b.sh', 'settings.example.json')
+        with tempfile.TemporaryDirectory() as d:
+            for rel in ('index.html', 'viz.js'):
+                with open(os.path.join(check.ROOT, rel), 'rb') as src, open(os.path.join(d, rel), 'wb') as dst:
+                    dst.write(src.read())
+            obj = fixture()
+            seen = []
+
+            def walk(x):
+                if isinstance(x, dict):
+                    if {'file', 'line', 'quote'} <= set(x):
+                        x['file'] = exts[len(seen) % len(exts)]
+                        seen.append((x['file'], x['line']))
+                    for v in x.values():
+                        walk(v)
+                elif isinstance(x, list):
+                    for v in x:
+                        walk(v)
+            walk([n for n in obj['nodes'] if n['id'] == 'clean'][0]['card'])
+            os.makedirs(os.path.join(d, 'spec'))
+            with open(os.path.join(d, 'spec', 'feature.js'), 'w') as f:
+                f.write(check.WRAP_PREFIX + json.dumps(obj, indent=1) + check.WRAP_SUFFIX)
+            url = pathlib.Path(d, 'index.html').as_uri() + '?view=feature&t=7.8&card=clean'
+            links = self.blob_links(check.chrome_dom(url, '1400,900', 4000))
+        self.assertEqual(sorted(links), sorted('%s64b4512/%s?plain=1#L%d' % (self.BASE, f, ln) for f, ln in seen))
+        self.assertEqual({l.split('?')[0].rsplit('.', 1)[1] for l in links}, {'md', 'py', 'sh', 'json'})
 
 
 class ChromeAlwaysReaped(unittest.TestCase):   # finding 7

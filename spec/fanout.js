@@ -1282,7 +1282,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "skills/feature-workflow/SKILL.md",
-        "line": 67,
+        "line": 66,
         "quote": "The master NEVER reads challenge-output files"
        }
       ]

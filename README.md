@@ -60,7 +60,7 @@ src:      {file, line, quote}       # file: path relative to the kit root
 
 ## Sources and the citation rule
 
-`src = {file, line, quote}`. `file` is a POSIX path relative to the kit root (no leading `/` or `~`, no `..` segment). `check.py` reads the file from the kit at `doctrine.kit_sha` through git (`git show <sha>:<file>`), so uncommitted kit edits are invisible to it, and that is the same text the page link opens: `https://github.com/TurboKach/claude-code-setup/blob/<kit_sha>/<file>#L<line>`. The quote (at most 120 chars) must appear within +-5 lines of `line`: the window's lines are joined with whitespace collapsed on both sides, so a quote may cross a hard wrap. Otherwise `check.py` reports it as stale (an error).
+`src = {file, line, quote}`. `file` is a POSIX path relative to the kit root (no leading `/` or `~`, no `..` segment). `check.py` reads the file from the kit at `doctrine.kit_sha` through git (`git show <sha>:<file>`), so uncommitted kit edits are invisible to it, and that is the same text the page link opens: `https://github.com/TurboKach/claude-code-setup/blob/<kit_sha>/<file>?plain=1#L<line>` (`?plain=1` makes GitHub open its code view, so the line is highlighted for markdown files too). The quote (at most 120 chars) must appear within +-5 lines of `line`: the window's lines are joined with whitespace collapsed on both sides, so a quote may cross a hard wrap. Otherwise `check.py` reports it as stale (an error).
 
 Limit: this catches an invented quote and a later edit of the cited lines. It does not catch a change of meaning elsewhere in the window.
 

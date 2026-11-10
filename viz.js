@@ -462,9 +462,10 @@ function draw(t) {
 }
 
 // ---- card panel -----------------------------------------------------------
+// ?plain=1: GitHub opens a .md blob rendered, where #L<n> does nothing; the code view highlights the line.
 function srcLink(s) {
   const a = document.createElement('a');
-  a.href = `${KIT_URL}/blob/${V.doctrine.kit_sha}/${s.file.split('/').map(encodeURIComponent).join('/')}#L${s.line}`;
+  a.href = `${KIT_URL}/blob/${V.doctrine.kit_sha}/${s.file.split('/').map(encodeURIComponent).join('/')}?plain=1#L${s.line}`;
   a.target = '_blank'; a.rel = 'noopener';
   a.textContent = `${s.file}:${s.line}  "${s.quote}"`;
   return a;
