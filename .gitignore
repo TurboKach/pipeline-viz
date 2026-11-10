@@ -1,0 +1,5 @@
+shots/
+.gstack/
+__pycache__/
+docs/prompts/
+docs/reviews/
