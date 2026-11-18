@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "feature pipeline",
  "key": "1",
  "doctrine": {
-  "kit_sha": "299e7d3",
+  "kit_sha": "a2d5cff",
   "cc_validated": "2.1.321",
-  "extracted": "2026-11-10"
+  "extracted": "2026-11-18"
  },
  "lanes": [
   {
@@ -27,7 +27,7 @@ window.PV=window.PV||[];window.PV.push(
   {
    "id": "codex",
    "label": "CODEX",
-   "sub": "gpt-6.1-sol"
+   "sub": "gpt-6.2-sol"
   }
  ],
  "cols": 16,
@@ -1073,7 +1073,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "codex-step<N>.md",
    "card": {
     "actor": "codex-challenge.sh, one background Bash in the master",
-    "model": "gpt-6.1-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "Round N launches in the turn step N lands, on <previous round head>..HEAD, always --pin (a later executor may be writing). The last step gets no round. Correctness and requirement gaps only; bug-catching, not the gate.",
     "inputs": [
      "range <prev head>..<head>"
@@ -1401,7 +1401,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "round<N>.md",
    "card": {
     "actor": "codex-challenge.sh, one background Bash in the master",
-    "model": "gpt-6.1-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "ONE challenge on <feature-base-sha>..HEAD, no --pin (nothing writes during the gate). Each round writes its own --out file. The runner traces out of the diff into the state it perturbs.",
     "inputs": [
      "<feature-base-sha>..HEAD"

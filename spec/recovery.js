@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "recovery & limits",
  "key": "2",
  "doctrine": {
-  "kit_sha": "299e7d3",
+  "kit_sha": "a2d5cff",
   "cc_validated": "2.1.321",
-  "extracted": "2026-11-10"
+  "extracted": "2026-11-18"
  },
  "lanes": [
   {
@@ -32,7 +32,7 @@ window.PV=window.PV||[];window.PV.push(
   {
    "id": "codex",
    "label": "CODEX",
-   "sub": "gpt-6.1-sol"
+   "sub": "gpt-6.2-sol"
   }
  ],
  "cols": 15,
@@ -603,7 +603,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "exit + seconds",
    "card": {
     "actor": "codex-challenge.sh",
-    "model": "gpt-6.1-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "Each attempt runs under gtimeout -k 60 900. Exit 124/137 is a stall and is not retried; a capacity or HTTP 400 error bails at once; other failures retry, 3 attempts 300 s apart. The header line records range, exit and seconds.",
     "inputs": [
      "range",
@@ -949,7 +949,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "file per slice",
    "card": {
     "actor": "codex-challenge.sh, one call per slice",
-    "model": "gpt-6.1-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol · medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "One run per slice, each with its own --out file and its own header line.",
     "inputs": [
      "slice ranges"

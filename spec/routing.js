@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "model / effort routing",
  "key": "5",
  "doctrine": {
-  "kit_sha": "299e7d3",
+  "kit_sha": "a2d5cff",
   "cc_validated": "2.1.321",
-  "extracted": "2026-11-10"
+  "extracted": "2026-11-18"
  },
  "lanes": [
   {
@@ -926,11 +926,11 @@ window.PV=window.PV||[];window.PV.push(
    "col": 10,
    "kind": "output",
    "title": "CODEX RUN",
-   "sub": "gpt-6.1-sol \u00b7 medium",
+   "sub": "gpt-6.2-sol \u00b7 medium",
    "produces": "codex model + effort",
    "card": {
     "actor": "resolved spawn",
-    "model": "gpt-6.1-sol \u00b7 effort medium (the script defaults)",
+    "model": "gpt-6.2-sol \u00b7 effort medium (the script defaults)",
     "does": "The codex runner for every challenge round; independent of the Claude model path.",
     "inputs": [],
     "artifacts": [],
@@ -958,7 +958,7 @@ window.PV=window.PV||[];window.PV.push(
      {
       "file": "skills/feature-workflow/scripts/codex-challenge.sh",
       "line": 112,
-      "quote": "model=${CODEX_REVIEW_MODEL:-gpt-6.1-sol}"
+      "quote": "model=${CODEX_REVIEW_MODEL:-gpt-6.2-sol}"
      }
     ]
    }
@@ -1083,8 +1083,8 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "model + effort",
    "card": {
     "actor": "settings.json env, read by codex-challenge.sh",
-    "model": "gpt-6.1-sol \u00b7 medium",
-    "does": "CODEX_REVIEW_MODEL and CODEX_REVIEW_EFFORT choose the codex model and effort for every round; the script defaults to gpt-6.1-sol and medium.",
+    "model": "gpt-6.2-sol \u00b7 medium",
+    "does": "CODEX_REVIEW_MODEL and CODEX_REVIEW_EFFORT choose the codex model and effort for every round; the script defaults to gpt-6.2-sol and medium.",
     "inputs": [
      "CODEX_REVIEW_MODEL",
      "CODEX_REVIEW_EFFORT"
@@ -1094,14 +1094,14 @@ window.PV=window.PV||[];window.PV.push(
     ],
     "gates": [
      {
-      "rule": "The runner takes its model and effort from CODEX_REVIEW_MODEL and CODEX_REVIEW_EFFORT, with gpt-6.1-sol and medium as defaults.",
+      "rule": "The runner takes its model and effort from CODEX_REVIEW_MODEL and CODEX_REVIEW_EFFORT, with gpt-6.2-sol and medium as defaults.",
       "evidence": "the verdict header line: model <model>/<effort>",
       "enforced_by": "script",
       "src": [
        {
         "file": "skills/feature-workflow/scripts/codex-challenge.sh",
         "line": 112,
-        "quote": "model=${CODEX_REVIEW_MODEL:-gpt-6.1-sol}"
+        "quote": "model=${CODEX_REVIEW_MODEL:-gpt-6.2-sol}"
        },
        {
         "file": "skills/feature-workflow/scripts/codex-challenge.sh",
@@ -1140,7 +1140,7 @@ window.PV=window.PV||[];window.PV.push(
      {
       "file": "settings.example.json",
       "line": 6,
-      "quote": "\"CODEX_REVIEW_MODEL\": \"gpt-6.1-sol\","
+      "quote": "\"CODEX_REVIEW_MODEL\": \"gpt-6.2-sol\","
      },
      {
       "file": "settings.example.json",
@@ -1522,8 +1522,8 @@ window.PV=window.PV||[];window.PV.push(
      "edge": "e_cdxenv_rcdx",
      "t": 0.0,
      "d": 1.0,
-     "packet": "gpt-6.1-sol",
-     "log": "CODEX_REVIEW_MODEL / CODEX_REVIEW_EFFORT: gpt-6.1-sol, medium"
+     "packet": "gpt-6.2-sol",
+     "log": "CODEX_REVIEW_MODEL / CODEX_REVIEW_EFFORT: gpt-6.2-sol, medium"
     }
    ]
   }

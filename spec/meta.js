@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "update & measure",
  "key": "6",
  "doctrine": {
-  "kit_sha": "299e7d3",
+  "kit_sha": "a2d5cff",
   "cc_validated": "2.1.321",
-  "extracted": "2026-11-10"
+  "extracted": "2026-11-18"
  },
  "lanes": [
   {

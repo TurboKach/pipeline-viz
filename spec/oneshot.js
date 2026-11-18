@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "one-shot path",
  "key": "3",
  "doctrine": {
-  "kit_sha": "299e7d3",
+  "kit_sha": "a2d5cff",
   "cc_validated": "2.1.321",
-  "extracted": "2026-11-10"
+  "extracted": "2026-11-18"
  },
  "lanes": [
   {
@@ -27,7 +27,7 @@ window.PV=window.PV||[];window.PV.push(
   {
    "id": "codex",
    "label": "CODEX",
-   "sub": "gpt-6.1-sol"
+   "sub": "gpt-6.2-sol"
   }
  ],
  "cols": 11,
@@ -511,7 +511,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "oneshot-round<N>.md",
    "card": {
     "actor": "codex-challenge.sh, one background Bash in the master",
-    "model": "gpt-6.1-sol \u00b7 medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol \u00b7 medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "Adversarial cross-model review of the one-shot's diff. The doctrine's one-shot call carries no --pin. Failure paths (exit 124, a quiet exit 0, exit 66) are mapped in view 2.",
     "inputs": [
      "<pre-change-sha>..HEAD"

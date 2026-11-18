@@ -4,9 +4,9 @@ window.PV=window.PV||[];window.PV.push(
  "title": "parallel fan-out",
  "key": "4",
  "doctrine": {
-  "kit_sha": "299e7d3",
+  "kit_sha": "a2d5cff",
   "cc_validated": "2.1.321",
-  "extracted": "2026-11-10"
+  "extracted": "2026-11-18"
  },
  "lanes": [
   {
@@ -32,7 +32,7 @@ window.PV=window.PV||[];window.PV.push(
   {
    "id": "codex",
    "label": "CODEX",
-   "sub": "gpt-6.1-sol"
+   "sub": "gpt-6.2-sol"
   }
  ],
  "cols": 14,
@@ -1228,7 +1228,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "codex-step<N>.md",
    "card": {
     "actor": "codex-challenge.sh, one background Bash in the master",
-    "model": "gpt-6.1-sol \u00b7 medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol \u00b7 medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "The per-step round launches on the merged range as for one step: always --pin, range <previous round head>..<HEAD now>. For a pair it stands in for team-reviewer.",
     "inputs": [
      "<previous round head>..<HEAD>"
@@ -1480,7 +1480,7 @@ window.PV=window.PV||[];window.PV.push(
    "produces": "whole-round<N>.md",
    "card": {
     "actor": "codex-challenge.sh, one background Bash in the lead",
-    "model": "gpt-6.1-sol \u00b7 medium (CODEX_REVIEW_MODEL / _EFFORT)",
+    "model": "gpt-6.2-sol \u00b7 medium (CODEX_REVIEW_MODEL / _EFFORT)",
     "does": "Agent-teams step 5: ONE codex-challenge.sh <feature-base-sha>..HEAD on the merged feature diff. The fix loop, its stop rule and the standalone-finding question are feature-workflow stage 5, verbatim (view 1).",
     "inputs": [
      "<feature-base-sha>..HEAD"
