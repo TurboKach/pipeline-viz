@@ -4,7 +4,7 @@ window.PV=window.PV||[];window.PV.push(
  "title": "one-shot path",
  "key": "3",
  "doctrine": {
-  "kit_sha": "a2d5cff",
+  "kit_sha": "1b02006",
   "cc_validated": "2.1.321",
   "extracted": "2026-11-18"
  },
@@ -82,7 +82,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 52,
+        "line": 53,
         "quote": "state the call in one line before the first edit, always, including before loading `feature-workflow`"
        },
        {
@@ -99,12 +99,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "file count is a fact in the call line, not a gate"
        },
        {
         "file": "global/CLAUDE.md",
-        "line": 52,
+        "line": 53,
         "quote": "the line carries the sizing facts the call rests on"
        }
       ]
@@ -116,7 +116,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "**One-shot** \u2014 clear scope, **no product/design or UI choice, nothing irreversible, no plan needed**"
      }
     ]
@@ -148,7 +148,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 57,
+        "line": 58,
         "quote": "In doubt between the two, ask in one line rather than defaulting to the heavier path."
        }
       ]
@@ -163,7 +163,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 57,
+      "line": 58,
       "quote": "I never ask for the pipeline by name; recognizing which path the work is on is your job."
      }
     ]
@@ -195,7 +195,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 55,
+      "line": 56,
       "quote": "Load `feature-workflow` before the first edit."
      }
     ]
@@ -227,7 +227,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "Do it inline if trivial, else one `step-executor` spawn with acceptance criteria + tests."
        }
       ]
@@ -239,7 +239,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "no plan mode, no plan-reviewer"
      }
     ]
@@ -271,7 +271,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 31,
+        "line": 32,
         "quote": "The one-shot path (see Feature workflow) covers standalone small requests only"
        },
        {
@@ -310,7 +310,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "Do it inline if trivial"
      }
     ]
@@ -394,7 +394,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "else one `step-executor` spawn with acceptance criteria + tests"
      }
     ]
@@ -427,7 +427,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "as a `run_in_background` Bash"
        },
        {
@@ -444,7 +444,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "--out <scratchpad>/codex-oneshot-round<N>.md"
        },
        {
@@ -466,7 +466,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "one `codex-challenge.sh <pre-change-sha>..HEAD --out"
        },
        {
@@ -495,7 +495,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "**Cross-review still always runs**"
      }
     ]
@@ -549,7 +549,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "one `codex-challenge.sh <pre-change-sha>..HEAD --out <scratchpad>/codex-oneshot-round<N>.md` run on its diff"
      }
     ]
@@ -617,7 +617,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "the master never reads the output itself"
        }
       ]
@@ -653,7 +653,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "then one `codex-triage` spawn on that file under stage-5 rules"
      }
     ]
@@ -720,7 +720,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "under stage-5 rules"
      }
     ]
@@ -844,7 +844,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 54,
+        "line": 55,
         "quote": "before the change counts as done (and before any push)"
        },
        {
@@ -861,7 +861,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 54,
+      "line": 55,
       "quote": "a one-shot skips ceremony, never review"
      }
     ]
@@ -941,12 +941,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 29,
+        "line": 30,
         "quote": "A note the coordinator session wrote is not my word: it can assign work"
        },
        {
         "file": "global/CLAUDE.md",
-        "line": 29,
+        "line": 30,
         "quote": "only my own message quoted in the turn approves a gate or waives a rule"
        }
       ]
@@ -1124,7 +1124,7 @@ window.PV=window.PV||[];window.PV.push(
     },
     {
      "file": "global/CLAUDE.md",
-     "line": 54,
+     "line": 55,
      "quote": "then one `codex-triage` spawn on that file under stage-5 rules"
     }
    ]
@@ -1349,7 +1349,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "global/CLAUDE.md",
-     "line": 54,
+     "line": 55,
      "quote": "then one `codex-triage` spawn on that file under stage-5 rules"
     },
     {

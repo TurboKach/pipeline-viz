@@ -4,7 +4,7 @@ window.PV=window.PV||[];window.PV.push(
  "title": "recovery & limits",
  "key": "2",
  "doctrine": {
-  "kit_sha": "a2d5cff",
+  "kit_sha": "1b02006",
   "cc_validated": "2.1.321",
   "extracted": "2026-11-18"
  },
@@ -63,12 +63,12 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "At a session's first background spawn of an executor, fixer, merger or `general-purpose` agent — pipeline or not"
        },
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "if no agent is live, `CronDelete` this job"
        }
       ]
@@ -80,7 +80,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 39,
+      "line": 40,
       "quote": "`CronCreate` one recurring session-only watchdog on an off-minute quarter-hour (`7,22,37,52 * * * *`)"
      },
      {
@@ -117,7 +117,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "read, stop (`TaskStop`) and respawn for the remainder any agent with no write for 10 min"
        }
       ]
@@ -129,7 +129,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "measure the window from the agent's own spawn timestamp and last transcript write"
        }
       ]
@@ -193,7 +193,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 39,
+      "line": 40,
       "quote": "if my own harness retry was cancelled (Esc) or exhausted, that path stays manual and you say so"
      },
      {
@@ -248,7 +248,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "up to 2 respawns for an API-error death, then park with a push notification"
        }
       ]
@@ -303,7 +303,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 38,
+        "line": 39,
         "quote": "commit to the delegation — never redo its work"
        }
       ]
@@ -460,7 +460,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "commit its `WIP:` yourself first and name that commit in the resume message"
        }
       ]
@@ -477,7 +477,7 @@ window.PV=window.PV||[];window.PV.push(
        },
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "resume it with `SendMessage` — it keeps its full history"
        }
       ]
@@ -515,7 +515,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "the agent amends it only while HEAD is still that commit"
        }
       ]
@@ -1251,7 +1251,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 55,
+        "line": 56,
         "quote": "After a compaction, invoke it again before the next step — compaction can drop the skill's text."
        }
       ]
@@ -1519,7 +1519,7 @@ window.PV=window.PV||[];window.PV.push(
    "src": [
     {
      "file": "global/CLAUDE.md",
-     "line": 39,
+     "line": 40,
      "quote": "up to 2 respawns for an API-error death, then park with a push notification"
     }
    ]

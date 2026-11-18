@@ -4,7 +4,7 @@ window.PV=window.PV||[];window.PV.push(
  "title": "model / effort routing",
  "key": "5",
  "doctrine": {
-  "kit_sha": "a2d5cff",
+  "kit_sha": "1b02006",
   "cc_validated": "2.1.321",
   "extracted": "2026-11-18"
  },
@@ -56,7 +56,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 39,
+      "line": 40,
       "quote": "An explicit pin and an agent definition's `model:` both take precedence over `CLAUDE_CODE_SUBAGENT_MODEL`"
      }
     ]
@@ -89,7 +89,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "`sonnet` for executors, fixers, `codex-triage` and `general-purpose`"
        },
        {
@@ -128,7 +128,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "`opus` for team-reviewer, for an executor only when the plan marks that step Opus with a reason"
        },
        {
@@ -155,7 +155,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "**never pin `fable`.**"
        }
       ]
@@ -167,7 +167,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "codebase search \u2192 the kit's `explorer` agent (sonnet, medium, read-only)"
        }
       ]
@@ -179,7 +179,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "every other spawn stays on Sonnet whatever its subject, security included, unless I ask for Opus for that task"
        }
       ]
@@ -224,7 +224,7 @@ window.PV=window.PV||[];window.PV.push(
     "src": [
      {
       "file": "global/CLAUDE.md",
-      "line": 39,
+      "line": 40,
       "quote": "**Spawns pin `model:`**"
      }
     ]
@@ -629,7 +629,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "`sonnet` for executors, fixers, `codex-triage` and `general-purpose`"
        },
        {
@@ -685,7 +685,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "`opus` for team-reviewer"
        },
        {
@@ -768,7 +768,7 @@ window.PV=window.PV||[];window.PV.push(
      },
      {
       "file": "global/CLAUDE.md",
-      "line": 39,
+      "line": 40,
       "quote": "plan-reviewer spawns with no `model:` \u2014 its frontmatter runs it on the session's model and effort"
      }
     ]
@@ -989,7 +989,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "which the kit sets to `sonnet`, so an unpinned spawn lands on Sonnet"
        },
        {
@@ -1006,7 +1006,7 @@ window.PV=window.PV||[];window.PV.push(
       "src": [
        {
         "file": "global/CLAUDE.md",
-        "line": 39,
+        "line": 40,
         "quote": "`CLAUDE_CODE_SUBAGENT_MODEL_FORCE` stays unset \u2014 it would flatten every pin to the floor."
        }
       ]

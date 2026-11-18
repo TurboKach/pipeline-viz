@@ -9,3 +9,4 @@
 
 - **public-map arc close-out** — 3 codex leftovers in the git reader (inherited GIT_DIR, replace refs, drift HEAD race) → docs/todos/public-map-close-out.md
 - **Top-level SDLC overview view** — one canvas for intake to ship, with the six views linked from their phases → docs/todos/sdlc-overview-view.md
+- **Citation line drift inside the ±5 window** — 24 citations pass validate but link 1–3 lines off their quote; no tool reports it → docs/todos/citation-line-drift.md
